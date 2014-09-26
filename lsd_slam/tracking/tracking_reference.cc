@@ -18,12 +18,12 @@
 * along with LSD-SLAM. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Tracking/TrackingReference.h"
-#include "DataStructures/Frame.h"
-#include "DepthEstimation/DepthMapPixelHypothesis.h"
-#include "GlobalMapping/KeyFrameGraph.h"
+#include "tracking/tracking_reference.h"
+#include "model/frame.h"
+#include "depth_estimation/depth_map_pixel_hypothesis.h"
+#include "global_mapping/key_frame_graph.h"
 #include "util/globalFuncs.h"
-#include "IOWrapper/ImageDisplay.h"
+#include "io_wrapper/image_display.h"
 
 namespace lsd_slam
 {

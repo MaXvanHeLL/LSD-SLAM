@@ -18,7 +18,7 @@
 * along with LSD-SLAM. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "DepthEstimation/DepthMap.h"
+#include "depth_estimation/depth_map.h"
 
 #include <stdio.h>
 #include <fstream>
@@ -26,11 +26,11 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "util/settings.h"
-#include "DepthEstimation/DepthMapPixelHypothesis.h"
-#include "DataStructures/Frame.h"
+#include "depth_estimation/depth_map_pixel_hypothesis.h"
+#include "model/frame.h"
 #include "util/globalFuncs.h"
-#include "IOWrapper/ImageDisplay.h"
-#include "GlobalMapping/KeyFrameGraph.h"
+#include "io_wrapper/image_display.h"
+#include "global_mapping/key_frame_graph.h"
 
 
 namespace lsd_slam

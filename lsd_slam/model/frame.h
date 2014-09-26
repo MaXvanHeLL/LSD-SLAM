@@ -19,12 +19,12 @@
 */
 
 #pragma once
-#include "util/SophusUtil.h"
+#include "util/sophus_util.h"
 #include "util/settings.h"
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/shared_mutex.hpp>
 #include "DataStructures/FramePoseStruct.h"
-#include "DataStructures/FrameMemory.h"
+#include "model/frame_memory.h"
 #include "unordered_set"
 #include "util/settings.h"
 

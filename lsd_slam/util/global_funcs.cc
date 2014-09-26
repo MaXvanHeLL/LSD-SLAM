@@ -19,9 +19,9 @@
 */
 
 #include "util/globalFuncs.h"
-#include "util/SophusUtil.h"
+#include "util/sophus_util.h"
 #include "opencv2/opencv.hpp"
-#include "DataStructures/Frame.h"
+#include "model/frame.h"
 
 namespace lsd_slam
 {

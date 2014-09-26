@@ -20,7 +20,7 @@
 
 #pragma once
 #include "util/settings.h"
-#include "util/EigenCoreInclude.h"
+#include "util/eigen_core_include.h"
 #include "boost/thread/mutex.hpp"
 #include <boost/thread/shared_mutex.hpp>
 

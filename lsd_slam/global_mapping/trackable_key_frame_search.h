@@ -22,10 +22,10 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
-#include "util/SophusUtil.h"
+#include "util/sophus_util.h"
 
 #ifdef HAVE_FABMAP
-	#include "GlobalMapping/FabMap.h"
+	#include "global_mapping/fab_map.h"
 #endif
 
 #include "util/settings.h"

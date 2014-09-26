@@ -18,12 +18,12 @@
 * along with LSD-SLAM. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "GlobalMapping/TrackableKeyFrameSearch.h"
+#include "global_mapping/trackable_key_frame_search.h"
 
 
-#include "GlobalMapping/KeyFrameGraph.h"
-#include "DataStructures/Frame.h"
-#include "Tracking/SE3Tracker.h"
+#include "global_mapping/key_frame_graph.h"
+#include "model/frame.h"
+#include "tracking/se3_tracker.h"
 
 namespace lsd_slam
 {

@@ -20,8 +20,8 @@
 
 #pragma once
 
-#include "IOWrapper/NotifyBuffer.h"
-#include "IOWrapper/TimestampedObject.h"
+#include "io_wrapper/notify_buffer.h"
+#include "io_wrapper/timestamped_object.h"
 
 
 

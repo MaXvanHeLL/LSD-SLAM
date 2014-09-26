@@ -18,8 +18,8 @@
 * along with LSD-SLAM. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "GlobalMapping/KeyFrameGraph.h"
-#include "DataStructures/Frame.h"
+#include "global_mapping/key_frame_graph.h"
+#include "model/frame.h"
 
 #include <g2o/core/sparse_optimizer.h>
 #include <g2o/solvers/pcg/linear_solver_pcg.h>
@@ -35,10 +35,10 @@
 #include "opencv2/opencv.hpp"
 
 #include <g2o/types/sim3/sim3.h>
-#include "GlobalMapping/g2oTypeSim3Sophus.h"
+#include "global_mapping/g2o_type_sim3_sophus.h"
 
 
-#include "IOWrapper/ImageDisplay.h"
+#include "io_wrapper/image_display.h"
 
 // for mkdir
 #include <sys/types.h>

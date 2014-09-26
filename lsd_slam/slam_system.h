@@ -25,12 +25,11 @@
 #include <boost/thread/condition_variable.hpp>
 #include <boost/thread/locks.hpp>
 #include "util/settings.h"
-#include "IOWrapper/Timestamp.h"
+#include "io_wrapper/timestamp.h"
 #include "opencv2/core/core.hpp"
 
-#include "util/SophusUtil.h"
-
-#include "Tracking/Relocalizer.h"
+#include "util/sophus_util.h"
+#include "tracking/relocalizer.h"
 
 
 

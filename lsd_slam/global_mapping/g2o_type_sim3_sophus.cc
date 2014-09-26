@@ -18,7 +18,7 @@
 * along with LSD-SLAM. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "GlobalMapping/g2oTypeSim3Sophus.h"
+#include "global_mapping/g2o_type_sim3_sophus.h"
 
 #include <g2o/core/factory.h>
 #include <g2o/stuff/macros.h>

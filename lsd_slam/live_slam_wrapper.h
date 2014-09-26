@@ -24,10 +24,10 @@
 #include <fstream>
 #include <chrono>
 
-#include "IOWrapper/Timestamp.h"
-#include "IOWrapper/NotifyBuffer.h"
-#include "IOWrapper/TimestampedObject.h"
-#include "util/SophusUtil.h"
+#include "io_wrapper/timestamp.h"
+#include "io_wrapper/notify_buffer.h"
+#include "io_wrapper/timestamped_object.h"
+#include "util/sophus_util.h"
 
 namespace cv {
 	class Mat;

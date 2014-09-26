@@ -23,9 +23,9 @@
 #include <unordered_map>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/shared_mutex.hpp>
-#include "util/EigenCoreInclude.h"
+#include "util/eigen_core_include.h"
 #include <g2o/core/sparse_optimizer.h>
-#include "util/SophusUtil.h"
+#include "util/sophus_util.h"
 #include "deque"
 
 

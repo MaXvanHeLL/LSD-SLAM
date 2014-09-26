@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "util/EigenCoreInclude.h"
+#include "util/eigen_core_include.h"
 #include <opencv2/core/core.hpp>
 
 

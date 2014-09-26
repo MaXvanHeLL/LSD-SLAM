@@ -21,7 +21,7 @@
 #pragma once
 #include <opencv2/core/core.hpp>
 #include "util/settings.h"
-#include "util/EigenCoreInclude.h"
+#include "util/eigen_core_include.h"
 
 
 namespace lsd_slam

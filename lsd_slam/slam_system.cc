@@ -20,20 +20,20 @@
 
 #include "SlamSystem.h"
 
-#include "DataStructures/Frame.h"
-#include "Tracking/SE3Tracker.h"
-#include "Tracking/Sim3Tracker.h"
-#include "DepthEstimation/DepthMap.h"
-#include "Tracking/TrackingReference.h"
-#include "LiveSLAMWrapper.h"
-#include "util/globalFuncs.h"
-#include "GlobalMapping/KeyFrameGraph.h"
-#include "GlobalMapping/TrackableKeyFrameSearch.h"
-#include "GlobalMapping/g2oTypeSim3Sophus.h"
-#include "IOWrapper/ImageDisplay.h"
-#include "IOWrapper/Output3DWrapper.h"
+#include "model/frame.h"
+#include "tracking/se3_tracker.h"
+#include "tracking/sim3_tracker.h"
+#include "depth_estimation/depth_map.h"
+#include "tracking/tracking_reference.h"
+#include "live_slam_wrapper.h"
+#include "util/global_funcs.h"
+#include "global_mapping/key_frame_graph.h"
+#include "global_mapping/trackable_key_frame_search.h"
+#include "global_mapping/g2o_type_sim3_sophus.h"
+#include "io_wrapper/image_display.h"
+#include "io_wrapper/output_3d_wrapper.h"
 #include <g2o/core/robust_kernel_impl.h>
-#include "DataStructures/FrameMemory.h"
+#include "model/frame_memory.h"
 #include "deque"
 
 // for mkdir

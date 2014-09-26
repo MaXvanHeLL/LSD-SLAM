@@ -18,7 +18,7 @@
 * along with LSD-SLAM. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "IOWrapper/Timestamp.h"
+#include "io_wrapper/timestamp.h"
 
 #include <sstream>
 #include <iostream>

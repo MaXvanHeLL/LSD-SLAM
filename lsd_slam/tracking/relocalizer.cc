@@ -18,10 +18,10 @@
 * along with LSD-SLAM. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Relocalizer.h"
-#include "DataStructures/Frame.h"
-#include "Tracking/SE3Tracker.h"
-#include "IOWrapper/ImageDisplay.h"
+#include "relocalizer.h"
+#include "model/frame.h"
+#include "tracking/se3_tracker.h"
+#include "io_wrapper/image_display.h"
 
 namespace lsd_slam
 {

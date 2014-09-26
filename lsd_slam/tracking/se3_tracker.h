@@ -21,8 +21,8 @@
 #pragma once
 #include <opencv2/core/core.hpp>
 #include "util/settings.h"
-#include "util/EigenCoreInclude.h"
-#include "util/SophusUtil.h"
+#include "util/eigen_core_include.h"
+#include "util/sophus_util.h"
 #include "Tracking/least_squares.h"
 
 

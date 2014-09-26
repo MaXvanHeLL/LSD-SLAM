@@ -19,11 +19,11 @@
 */
 
 #pragma once
-#include "util/EigenCoreInclude.h"
+#include "util/eigen_core_include.h"
 #include "opencv2/core/core.hpp"
 #include "util/settings.h"
-#include "util/IndexThreadReduce.h"
-#include "util/SophusUtil.h"
+#include "util/index_thread_reduce.h"
+#include "util/sophus_util.h"
 
 
 

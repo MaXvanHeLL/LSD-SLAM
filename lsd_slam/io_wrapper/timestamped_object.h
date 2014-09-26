@@ -25,7 +25,7 @@
 
 #include <opencv2/core/core.hpp>
 
-#include "IOWrapper/Timestamp.h"
+#include "io_wrapper/timestamp.h"
 
 
 namespace lsd_slam

@@ -20,7 +20,7 @@
 
 
 #include <DataStructures/FramePoseStruct.h>
-#include "DataStructures/Frame.h"
+#include "model/frame.h"
 
 namespace lsd_slam
 {

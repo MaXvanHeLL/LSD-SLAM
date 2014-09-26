@@ -19,7 +19,7 @@
 */
 
 #pragma once
-#include "util/SophusUtil.h"
+#include "util/sophus_util.h"
 
 #include "g2o/core/base_vertex.h"
 #include "g2o/core/base_binary_edge.h"

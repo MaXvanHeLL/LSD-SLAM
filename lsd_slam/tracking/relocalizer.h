@@ -23,7 +23,7 @@
 #include "boost/thread.hpp"
 #include <stdio.h>
 #include <iostream>
-#include "util/SophusUtil.h"
+#include "util/sophus_util.h"
 
 
 namespace lsd_slam
