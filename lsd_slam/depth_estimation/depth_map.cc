@@ -20,6 +20,7 @@
 
 #include "depth_estimation/depth_map.h"
 
+#include <ctime>
 #include <stdio.h>
 #include <fstream>
 #include <iostream>
@@ -28,7 +29,7 @@
 #include "util/settings.h"
 #include "depth_estimation/depth_map_pixel_hypothesis.h"
 #include "model/frame.h"
-#include "util/globalFuncs.h"
+#include "util/global_funcs.h"
 #include "io_wrapper/image_display.h"
 #include "global_mapping/key_frame_graph.h"
 
@@ -36,6 +37,10 @@
 namespace lsd_slam
 {
 
+
+void gettimeofday(std::time_t* t, void* = nullptr) {
+  std::time(t);
+}
 
 
 DepthMap::DepthMap(int w, int h, const Eigen::Matrix3f& K)
@@ -192,7 +197,7 @@ bool DepthMap::makeAndCheckEPL(const int x, const int y, const Frame* const ref,
 	float epx = - fx * ref->thisToOther_t[0] + ref->thisToOther_t[2]*(x - cx);
 	float epy = - fy * ref->thisToOther_t[1] + ref->thisToOther_t[2]*(y - cy);
 
-	if(isnanf(epx+epy))
+	if(std::isnan(epx+epy))
 		return false;
 
 
@@ -982,7 +987,7 @@ void DepthMap::initializeFromGTDepth(Frame* new_frame)
 		for(int x=0;x<width;x++)
 		{
 			float idepthValue = idepth[x+y*width];
-			if(!isnanf(idepthValue) && idepthValue > 0)
+			if(!std::isnan(idepthValue) && idepthValue > 0)
 			{
 				averageGTIDepthSum += idepthValue;
 				averageGTIDepthNum ++;
@@ -997,7 +1002,7 @@ void DepthMap::initializeFromGTDepth(Frame* new_frame)
 		{
 			float idepthValue = idepth[x+y*width];
 			
-			if(!isnanf(idepthValue) && idepthValue > 0)
+			if(!std::isnan(idepthValue) && idepthValue > 0)
 			{
 				currentDepthMap[x+y*width] = DepthMapPixelHypothesis(
 						idepthValue,
@@ -1074,7 +1079,7 @@ void DepthMap::updateKeyframe(std::deque< std::shared_ptr<Frame> > referenceFram
 {
 	assert(isValid());
 
-	struct timeval tv_start_all, tv_end_all;
+	std::time_t tv_start_all, tv_end_all;
 	gettimeofday(&tv_start_all, NULL);
 
 	oldest_referenceFrame = referenceFrames.front().get();
@@ -1121,7 +1126,7 @@ void DepthMap::updateKeyframe(std::deque< std::shared_ptr<Frame> > referenceFram
 		cv::cvtColor(debugImageStereoLines, debugImageStereoLines, CV_GRAY2RGB);
 	}
 
-	struct timeval tv_start, tv_end;
+	std::time_t tv_start, tv_end;
 
 
 	gettimeofday(&tv_start, NULL);
@@ -1229,7 +1234,7 @@ void DepthMap::createKeyFrame(Frame* new_keyframe)
 	//boost::shared_lock<boost::shared_mutex> lock = activeKeyFrame->getActiveLock();
 	boost::shared_lock<boost::shared_mutex> lock2 = new_keyframe->getActiveLock();
 
-	struct timeval tv_start_all, tv_end_all;
+	std::time_t tv_start_all, tv_end_all;
 	gettimeofday(&tv_start_all, NULL);
 
 
@@ -1246,7 +1251,7 @@ void DepthMap::createKeyFrame(Frame* new_keyframe)
 
 	SE3 oldToNew_SE3 = se3FromSim3(new_keyframe->pose->thisToParent_raw).inverse();
 
-	struct timeval tv_start, tv_end;
+	std::time_t tv_start, tv_end;
 	gettimeofday(&tv_start, NULL);
 	propagateDepth(new_keyframe);
 	gettimeofday(&tv_end, NULL);
@@ -1329,7 +1334,7 @@ void DepthMap::createKeyFrame(Frame* new_keyframe)
 
 void DepthMap::addTimingSample()
 {
-	struct timeval now;
+	std::time_t now;
 	gettimeofday(&now, NULL);
 	float sPassed = ((now.tv_sec-lastHzUpdate.tv_sec) + (now.tv_usec-lastHzUpdate.tv_usec)/1000000.0f);
 	if(sPassed > 1.0f)
@@ -1366,9 +1371,9 @@ void DepthMap::finalizeKeyFrame()
 	assert(isValid());
 
 
-	struct timeval tv_start_all, tv_end_all;
+	std::time_t tv_start_all, tv_end_all;
 	gettimeofday(&tv_start_all, NULL);
-	struct timeval tv_start, tv_end;
+	std::time_t tv_start, tv_end;
 
 	gettimeofday(&tv_start, NULL);
 	regularizeDepthMapFillHoles();
@@ -1508,7 +1513,7 @@ inline float DepthMap::doLineStereo(
 
 
 	// check for nan due to eg division by zero.
-	if(isnanf((float)(pFar[0]+pClose[0])))
+	if(std::isnan((float)(pFar[0]+pClose[0])))
 		return -4;
 
 	// calculate increments in which we will step through the epipolar line.

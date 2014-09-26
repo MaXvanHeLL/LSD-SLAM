@@ -19,6 +19,7 @@
 */
 
 #pragma once
+#include <deque>
 #include "util/eigen_core_include.h"
 #include "opencv2/core/core.hpp"
 #include "util/settings.h"
@@ -33,6 +34,7 @@ namespace lsd_slam
 class DepthMapPixelHypothesis;
 class Frame;
 class KeyFrameGraph;
+typedef time_t timeval;
 
 
 /**
@@ -86,7 +88,7 @@ public:
 	float msObserve, msRegularize, msPropagate, msFillHoles, msSetDepth;
 	int nUpdate, nCreate, nFinalize;
 	int nObserve, nRegularize, nPropagate, nFillHoles, nSetDepth;
-	struct timeval lastHzUpdate;
+	timeval lastHzUpdate;
 	float nAvgUpdate, nAvgCreate, nAvgFinalize;
 	float nAvgObserve, nAvgRegularize, nAvgPropagate, nAvgFillHoles, nAvgSetDepth;
 
