@@ -267,7 +267,7 @@ void Frame::setDepthFromGroundTruth(const float* depth, float cov_scale)
 		{
 			if (x > 0 && x < width0-1 && y > 0 && y < height0-1 && // pyramidMaxGradient is not valid for the border
 					pyrMaxGradient[x+y*width0] >= MIN_ABS_GRAD_CREATE &&
-					!isnanf(*depth) && *depth > 0)
+					!std::isnan(*depth) && *depth > 0)
 			{
 				*pyrIDepth = 1.0f / *depth;
 				*pyrIDepthVar = VAR_GT_INIT_INITIAL * cov_scale;
@@ -292,7 +292,7 @@ void Frame::setDepthFromGroundTruth(const float* depth, float cov_scale)
 	data.hasIDepthBeenSet = true;
 }
 
-void Frame::prepareForStereoWith(Frame* other, Sim3 thisToOther, const Eigen::Matrix3f& K, const int level)
+void Frame::prepareForStereoWith(Frame* other, const Sim3& thisToOther, const Eigen::Matrix3f& K, const int level)
 {
 	Sim3 otherToThis = thisToOther.inverse();
 

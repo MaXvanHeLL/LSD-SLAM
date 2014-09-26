@@ -18,12 +18,12 @@
 * along with LSD-SLAM. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "LiveSLAMWrapper.h"
+#include "live_slam_wrapper.h"
 
 #include <boost/thread.hpp>
 #include "util/settings.h"
 #include "util/globalFuncs.h"
-#include "SlamSystem.h"
+#include "slam_system.h"
 
 #include <sstream>
 #include <fstream>

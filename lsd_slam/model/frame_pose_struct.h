@@ -58,7 +58,7 @@ public:
 	// graphVertex (if the frame has one, i.e. is a KF and has been added to the graph, otherwise 0).
 	VertexSim3* graphVertex;
 
-	void setPoseGraphOptResult(Sim3 camToWorld);
+	void setPoseGraphOptResult(const Sim3& camToWorld);
 	void applyPoseGraphOptResult();
 	Sim3 getCamToWorld(int recursionDepth = 0);
 	void invalidateCache();

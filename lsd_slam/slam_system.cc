@@ -18,7 +18,7 @@
 * along with LSD-SLAM. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "SlamSystem.h"
+#include "slam_system.h"
 
 #include "model/frame.h"
 #include "tracking/se3_tracker.h"
