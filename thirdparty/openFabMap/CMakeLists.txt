@@ -38,32 +38,38 @@ file(GLOB OPENFABMAP_INCS "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp")
 
 # tell cmake about the library
 ADD_LIBRARY(openFABMAP SHARED ${OPENFABMAP_FILES} ${OPENFABMAP_INCS})
+set_property(TARGET openFABMAP PROPERTY FOLDER "lsd_slam/thirdparty")
 ############ end openFABMAP library ##################
 
 # Tell CMake where the headers are
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-# Link against the required libraries in OpenCV >=2.2
-IF(OPENCV2_FOUND)
-    SET( OPENCV2_INSTALLED 1)
-#     message( STATUS "Using OpenCV >= 2.2" )
-	IF(WIN32)
-		IF(MINGW)
-			TARGET_LINK_LIBRARIES(openFABMAP ${OPENCV2_LIBS})
-		ELSE(MINGW)
-			FOREACH (LIB ${OPENCV2_DEBUG_LIBS})
-				TARGET_LINK_LIBRARIES(openFABMAP
-				debug ${LIB})
-			ENDFOREACH(LIB)
-			FOREACH (LIB ${OPENCV2_RELEASE_LIBS})
-				TARGET_LINK_LIBRARIES(openFABMAP
-				optimized ${LIB})
-			ENDFOREACH(LIB)
-		ENDIF(MINGW)
-	ELSE(WIN32)
-		TARGET_LINK_LIBRARIES(openFABMAP opencv_highgui opencv_core opencv_features2d opencv_imgproc opencv_nonfree)
-	ENDIF(WIN32)
-ENDIF(OPENCV2_FOUND)
+# # Link against the required libraries in OpenCV >=2.2
+# IF(OPENCV2_FOUND)
+#     SET( OPENCV2_INSTALLED 1)
+# #     message( STATUS "Using OpenCV >= 2.2" )
+# 	IF(WIN32)
+# 		IF(MINGW)
+# 			TARGET_LINK_LIBRARIES(openFABMAP ${OPENCV2_LIBS})
+# 		ELSE(MINGW)
+# 			FOREACH (LIB ${OPENCV2_DEBUG_LIBS})
+# 				TARGET_LINK_LIBRARIES(openFABMAP
+# 				debug ${LIB})
+# 			ENDFOREACH(LIB)
+# 			FOREACH (LIB ${OPENCV2_RELEASE_LIBS})
+# 				TARGET_LINK_LIBRARIES(openFABMAP
+# 				optimized ${LIB})
+# 			ENDFOREACH(LIB)
+# 		ENDIF(MINGW)
+# 	ELSE(WIN32)
+# 		TARGET_LINK_LIBRARIES(openFABMAP opencv_highgui opencv_core opencv_features2d opencv_imgproc opencv_nonfree)
+# 	ENDIF(WIN32)
+# ENDIF(OPENCV2_FOUND)
+
+
+find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
+TARGET_LINK_LIBRARIES(openFABMAP opencv_highgui opencv_core opencv_features2d opencv_imgproc opencv_nonfree)
 
 
 ############ openFABMAPcli executable ##################
