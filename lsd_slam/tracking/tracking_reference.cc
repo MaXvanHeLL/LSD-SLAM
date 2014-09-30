@@ -22,7 +22,7 @@
 #include "model/frame.h"
 #include "depth_estimation/depth_map_pixel_hypothesis.h"
 #include "global_mapping/key_frame_graph.h"
-#include "util/globalFuncs.h"
+#include "util/global_funcs.h"
 #include "io_wrapper/image_display.h"
 
 namespace lsd_slam

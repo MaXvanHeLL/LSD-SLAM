@@ -19,6 +19,7 @@
 */
 
 #pragma once
+#include <chrono>
 #include <deque>
 #include "util/eigen_core_include.h"
 #include "opencv2/core/core.hpp"
@@ -30,6 +31,8 @@
 
 namespace lsd_slam
 {
+
+typedef std::chrono::high_resolution_clock::time_point timepoint_t;
 
 class DepthMapPixelHypothesis;
 class Frame;
@@ -88,7 +91,7 @@ public:
 	float msObserve, msRegularize, msPropagate, msFillHoles, msSetDepth;
 	int nUpdate, nCreate, nFinalize;
 	int nObserve, nRegularize, nPropagate, nFillHoles, nSetDepth;
-	timeval lastHzUpdate;
+	timepoint_t lastHzUpdate;
 	float nAvgUpdate, nAvgCreate, nAvgFinalize;
 	float nAvgObserve, nAvgRegularize, nAvgPropagate, nAvgFillHoles, nAvgSetDepth;
 

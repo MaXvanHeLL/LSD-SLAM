@@ -34,7 +34,12 @@
 #include "io_wrapper/output_3d_wrapper.h"
 #include <g2o/core/robust_kernel_impl.h>
 #include "model/frame_memory.h"
-#include "deque"
+
+#include "util/snprintf.h"
+
+#include <deque>
+#include <cstdarg>
+#include <thread>
 
 // for mkdir
 #include <sys/types.h>
@@ -121,7 +126,8 @@ SlamSystem::SlamSystem(int w, int h, Eigen::Matrix3f K, bool enableSLAM)
 	msTrackFrame = msOptimizationIteration = msFindConstraintsItaration = msFindReferences = 0;
 	nTrackFrame = nOptimizationIteration = nFindConstraintsItaration = nFindReferences = 0;
 	nAvgTrackFrame = nAvgOptimizationIteration = nAvgFindConstraintsItaration = nAvgFindReferences = 0;
-	gettimeofday(&lastHzUpdate, NULL);
+	// gettimeofday(&lastHzUpdate, NULL);
+	lastHzUpdate = std::chrono::high_resolution_clock::now();
 
 }
 
@@ -227,7 +233,7 @@ void SlamSystem::finalize()
 	while(lastNumConstraintsAddedOnFullRetrack != 0)
 	{
 		doFullReConstraintTrack = true;
-		usleep(200000);
+		std::this_thread::sleep_for(std::chrono::microseconds(200000));
 	}
 
 
@@ -239,7 +245,7 @@ void SlamSystem::finalize()
 	newConstraintMutex.unlock();
 	while(doFinalOptimization)
 	{
-		usleep(200000);
+		std::this_thread::sleep_for(std::chrono::microseconds(200000));
 	}
 
 
@@ -249,13 +255,13 @@ void SlamSystem::finalize()
 	unmappedTrackedFramesMutex.unlock();
 	while(doFinalOptimization)
 	{
-		usleep(200000);
+		std::this_thread::sleep_for(std::chrono::microseconds(200000));
 	}
 	boost::unique_lock<boost::mutex> lock(newFrameMappedMutex);
 	newFrameMappedSignal.wait(lock);
 	newFrameMappedSignal.wait(lock);
 
-	usleep(200000);
+	std::this_thread::sleep_for(std::chrono::microseconds(200000));
 	printf("Done Finalizing Graph.!!\n");
 }
 
@@ -312,13 +318,15 @@ void SlamSystem::constraintSearchThreadLoop()
 			newKeyFrames.pop_front();
 			lock.unlock();
 
-			struct timeval tv_start, tv_end;
-			gettimeofday(&tv_start, NULL);
+			std::chrono::high_resolution_clock::time_point tv_start, tv_end;
+			//gettimeofday(&tv_start, NULL);
+			tv_start = std::chrono::high_resolution_clock::now();
 
 			findConstraintsForNewKeyFrames(newKF, true, true, 1.0);
 			failedToRetrack=0;
-			gettimeofday(&tv_end, NULL);
-			msFindConstraintsItaration = 0.9*msFindConstraintsItaration + 0.1*((tv_end.tv_sec-tv_start.tv_sec)*1000.0f + (tv_end.tv_usec-tv_start.tv_usec)/1000.0f);
+			// gettimeofday(&tv_end, NULL);
+			tv_end = std::chrono::high_resolution_clock::now();
+			msFindConstraintsItaration = 0.9*msFindConstraintsItaration + 0.1*std::chrono::duration_cast<std::chrono::milliseconds>(tv_end - tv_start).count();
 			nFindConstraintsItaration++;
 
 			FrameMemory::getInstance().pruneActiveFrames();
@@ -507,11 +515,13 @@ void SlamSystem::changeKeyframe(bool noCreate, bool force, float maxScore)
 	std::shared_ptr<Frame> newKeyframeCandidate = latestTrackedFrame;
 	if(doKFReActivation && SLAMEnabled)
 	{
-		struct timeval tv_start, tv_end;
-		gettimeofday(&tv_start, NULL);
+		std::chrono::high_resolution_clock::time_point tv_start, tv_end;
+		//gettimeofday(&tv_start, NULL);
+		tv_start = std::chrono::high_resolution_clock::now();
 		newReferenceKF = trackableKeyFrameSearch->findRePositionCandidate(newKeyframeCandidate.get(), maxScore);
-		gettimeofday(&tv_end, NULL);
-		msFindReferences = 0.9*msFindReferences + 0.1*((tv_end.tv_sec-tv_start.tv_sec)*1000.0f + (tv_end.tv_usec-tv_start.tv_usec)/1000.0f);
+		// gettimeofday(&tv_end, NULL);
+		tv_end = std::chrono::high_resolution_clock::now();
+		msFindReferences = 0.9*msFindReferences + 0.1*std::chrono::duration_cast<std::chrono::milliseconds>(tv_end - tv_start).count();
 		nFindReferences++;
 	}
 
@@ -614,9 +624,10 @@ bool SlamSystem::updateKeyframe()
 void SlamSystem::addTimingSamples()
 {
 	map->addTimingSample();
-	struct timeval now;
-	gettimeofday(&now, NULL);
-	float sPassed = ((now.tv_sec-lastHzUpdate.tv_sec) + (now.tv_usec-lastHzUpdate.tv_usec)/1000000.0f);
+	//std::chrono::high_resolution_clock::time_point now;
+	// gettimeofday(&now, NULL);
+	auto now = std::chrono::high_resolution_clock::now();
+	float sPassed = std::chrono::duration_cast<std::chrono::seconds>(now - lastHzUpdate).count();
 	if(sPassed > 1.0f)
 	{
 		nAvgTrackFrame = 0.8*nAvgTrackFrame + 0.2*(nTrackFrame / sPassed); nTrackFrame = 0;
@@ -923,8 +934,9 @@ void SlamSystem::trackFrame(uchar* image, unsigned int frameID, bool blockUntilM
 
 
 
-	struct timeval tv_start, tv_end;
-	gettimeofday(&tv_start, NULL);
+	std::chrono::high_resolution_clock::time_point tv_start, tv_end;
+	//gettimeofday(&tv_start, NULL);
+	tv_start = std::chrono::high_resolution_clock::now();
 
 	SE3 newRefToFrame_poseUpdate = tracker->trackFrame(
 			trackingReference,
@@ -932,8 +944,9 @@ void SlamSystem::trackFrame(uchar* image, unsigned int frameID, bool blockUntilM
 			frameToReference_initialEstimate);
 
 
-	gettimeofday(&tv_end, NULL);
-	msTrackFrame = 0.9*msTrackFrame + 0.1*((tv_end.tv_sec-tv_start.tv_sec)*1000.0f + (tv_end.tv_usec-tv_start.tv_usec)/1000.0f);
+	// gettimeofday(&tv_end, NULL);
+	tv_end = std::chrono::high_resolution_clock::now();
+	msTrackFrame = 0.9*msTrackFrame + 0.1*std::chrono::duration_cast<std::chrono::milliseconds>(tv_end - tv_start).count();
 	nTrackFrame++;
 
 	tracking_lastResidual = tracker->lastResidual;
@@ -1126,7 +1139,7 @@ float SlamSystem::tryTrackSim3(
 void SlamSystem::testConstraint(
 		Frame* candidate,
 		KFConstraintStruct* &e1_out, KFConstraintStruct* &e2_out,
-		Sim3 candidateToFrame_initialEstimate,
+		const Sim3& candidateToFrame_initialEstimate,
 		float strictness)
 {
 	candidateTrackingReference->importFrame(candidate);
@@ -1586,8 +1599,9 @@ int SlamSystem::findConstraintsForNewKeyFrames(Frame* newKeyFrame, bool forcePar
 
 bool SlamSystem::optimizationIteration(int itsPerTry, float minChange)
 {
-	struct timeval tv_start, tv_end;
-	gettimeofday(&tv_start, NULL);
+	std::chrono::high_resolution_clock::time_point tv_start, tv_end;
+	//gettimeofday(&tv_start, NULL);
+	tv_start = std::chrono::high_resolution_clock::now();
 
 
 
@@ -1656,8 +1670,9 @@ bool SlamSystem::optimizationIteration(int itsPerTry, float minChange)
 				maxChange > minChange && its == itsPerTry ? "continue optimizing":"Waiting for addition to graph.");
 
 
-	gettimeofday(&tv_end, NULL);
-	msOptimizationIteration = 0.9*msOptimizationIteration + 0.1*((tv_end.tv_sec-tv_start.tv_sec)*1000.0f + (tv_end.tv_usec-tv_start.tv_usec)/1000.0f);
+	// gettimeofday(&tv_end, NULL);
+	tv_end = std::chrono::high_resolution_clock::now();
+	msOptimizationIteration = 0.9*msOptimizationIteration + 0.1*std::chrono::duration_cast<std::chrono::milliseconds>(tv_end - tv_start).count();
 	nOptimizationIteration++;
 
 

@@ -71,12 +71,12 @@ public:
 	SE3 trackFrameOnPermaref(
 			Frame* reference,
 			Frame* frame,
-			SE3 referenceToFrame);
+			const SE3& referenceToFrame);
 
 
 	float checkPermaRefOverlap(
 			Frame* reference,
-			SE3 referenceToFrame);
+			const SE3& referenceToFrame);
 
 
 	float pointUsage;

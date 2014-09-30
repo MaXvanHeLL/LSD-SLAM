@@ -18,7 +18,7 @@
 * along with LSD-SLAM. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "util/globalFuncs.h"
+#include "util/global_funcs.h"
 #include "util/sophus_util.h"
 #include "opencv2/opencv.hpp"
 #include "model/frame.h"

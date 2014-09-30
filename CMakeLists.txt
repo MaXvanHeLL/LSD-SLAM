@@ -136,6 +136,9 @@ list(APPEND EXTERNAL_LIBRARIES ${G2O_LIBRARIES})
 #add_definitions("-DHAVE_FABMAP")
 #set(FABMAP_LIB openFABMAP )
 
+# Direct API
+include_directories("${LSD_SLAM_DIR}/thirdparty/dirent-1.20.1/include")
+
 set(ALL_LIBRARIES ${G2O_LIBRARIES} ${FABMAP_LIB})
 
 if(ANDROID)

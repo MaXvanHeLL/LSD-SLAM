@@ -21,6 +21,7 @@
 #include "live_slam_wrapper.h"
 #include <vector>
 #include "util/sophus_util.h"
+#include "util/snprintf.h"
 
 #include "slam_system.h"
 

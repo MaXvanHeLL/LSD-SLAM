@@ -20,7 +20,7 @@
 
 #include "depth_estimation/depth_map.h"
 
-#include <ctime>
+#include <chrono>
 #include <stdio.h>
 #include <fstream>
 #include <iostream>
@@ -36,12 +36,6 @@
 
 namespace lsd_slam
 {
-
-
-void gettimeofday(std::time_t* t, void* = nullptr) {
-  std::time(t);
-}
-
 
 DepthMap::DepthMap(int w, int h, const Eigen::Matrix3f& K)
 {
@@ -79,7 +73,8 @@ DepthMap::DepthMap(int w, int h, const Eigen::Matrix3f& K)
 
 	msUpdate =  msCreate =  msFinalize = 0;
 	msObserve =  msRegularize =  msPropagate =  msFillHoles =  msSetDepth = 0;
-	gettimeofday(&lastHzUpdate, NULL);
+	// gettimeofday(&lastHzUpdate, NULL);
+	lastHzUpdate = std::chrono::high_resolution_clock::now();
 	nUpdate = nCreate = nFinalize = 0;
 	nObserve = nRegularize = nPropagate = nFillHoles = nSetDepth = 0;
 	nAvgUpdate = nAvgCreate = nAvgFinalize = 0;
@@ -554,7 +549,7 @@ void DepthMap::propagateDepth(Frame* new_keyframe)
 			if(trackingWasGood != 0)
 			{
 				if(!trackingWasGood[(x >> SE3TRACKING_MIN_LEVEL) + (width >> SE3TRACKING_MIN_LEVEL)*(y >> SE3TRACKING_MIN_LEVEL)]
-				                    || destAbsGrad < MIN_ABS_GRAD_DECREASE)
+														|| destAbsGrad < MIN_ABS_GRAD_DECREASE)
 				{
 					if(enablePrintDebugInfo) runningStats.num_prop_removed_colorDiff++;
 					continue;
@@ -1079,8 +1074,9 @@ void DepthMap::updateKeyframe(std::deque< std::shared_ptr<Frame> > referenceFram
 {
 	assert(isValid());
 
-	std::time_t tv_start_all, tv_end_all;
-	gettimeofday(&tv_start_all, NULL);
+	timepoint_t tv_start_all, tv_end_all;
+	// gettimeofday(&tv_start_all, NULL);
+	tv_start_all  = std::chrono::high_resolution_clock::now();
 
 	oldest_referenceFrame = referenceFrames.front().get();
 	newest_referenceFrame = referenceFrames.back().get();
@@ -1126,45 +1122,54 @@ void DepthMap::updateKeyframe(std::deque< std::shared_ptr<Frame> > referenceFram
 		cv::cvtColor(debugImageStereoLines, debugImageStereoLines, CV_GRAY2RGB);
 	}
 
-	std::time_t tv_start, tv_end;
+	timepoint_t tv_start, tv_end;
 
 
-	gettimeofday(&tv_start, NULL);
+	// gettimeofday(&tv_start, NULL);
+	tv_start = std::chrono::high_resolution_clock::now();
 	observeDepth();
-	gettimeofday(&tv_end, NULL);
-	msObserve = 0.9*msObserve + 0.1*((tv_end.tv_sec-tv_start.tv_sec)*1000.0f + (tv_end.tv_usec-tv_start.tv_usec)/1000.0f);
+	// gettimeofday(&tv_end, NULL);
+	tv_end = std::chrono::high_resolution_clock::now();
+	msObserve = 0.9*msObserve + 0.1*std::chrono::duration_cast<std::chrono::milliseconds>(tv_end - tv_start).count();
 	nObserve++;
 
 	//if(rand()%10==0)
 	{
-		gettimeofday(&tv_start, NULL);
+		// gettimeofday(&tv_start, NULL);
+		tv_start = std::chrono::high_resolution_clock::now();
 		regularizeDepthMapFillHoles();
-		gettimeofday(&tv_end, NULL);
-		msFillHoles = 0.9*msFillHoles + 0.1*((tv_end.tv_sec-tv_start.tv_sec)*1000.0f + (tv_end.tv_usec-tv_start.tv_usec)/1000.0f);
+		// gettimeofday(&tv_end, NULL);
+		tv_end = std::chrono::high_resolution_clock::now();
+		msFillHoles = 0.9*msFillHoles + 0.1*std::chrono::duration_cast<std::chrono::milliseconds>(tv_end - tv_start).count();
 		nFillHoles++;
 	}
 
 
-	gettimeofday(&tv_start, NULL);
+	// gettimeofday(&tv_start, NULL);
+	tv_start = std::chrono::high_resolution_clock::now();
 	regularizeDepthMap(false, VAL_SUM_MIN_FOR_KEEP);
-	gettimeofday(&tv_end, NULL);
-	msRegularize = 0.9*msRegularize + 0.1*((tv_end.tv_sec-tv_start.tv_sec)*1000.0f + (tv_end.tv_usec-tv_start.tv_usec)/1000.0f);
+	// gettimeofday(&tv_end, NULL);
+	tv_end = std::chrono::high_resolution_clock::now();
+	msRegularize = 0.9*msRegularize + 0.1*std::chrono::duration_cast<std::chrono::milliseconds>(tv_end - tv_start).count();
 	nRegularize++;
 
 	
 	// Update depth in keyframe
 	if(!activeKeyFrame->depthHasBeenUpdatedFlag)
 	{
-		gettimeofday(&tv_start, NULL);
+		// gettimeofday(&tv_start, NULL);
+		tv_start = std::chrono::high_resolution_clock::now();
 		activeKeyFrame->setDepth(currentDepthMap);
-		gettimeofday(&tv_end, NULL);
-		msSetDepth = 0.9*msSetDepth + 0.1*((tv_end.tv_sec-tv_start.tv_sec)*1000.0f + (tv_end.tv_usec-tv_start.tv_usec)/1000.0f);
+		// gettimeofday(&tv_end, NULL);
+		tv_end = std::chrono::high_resolution_clock::now();
+		msSetDepth = 0.9*msSetDepth + 0.1*std::chrono::duration_cast<std::chrono::milliseconds>(tv_end - tv_start).count();
 		nSetDepth++;
 	}
 
 
-	gettimeofday(&tv_end_all, NULL);
-	msUpdate = 0.9*msUpdate + 0.1*((tv_end_all.tv_sec-tv_start_all.tv_sec)*1000.0f + (tv_end_all.tv_usec-tv_start_all.tv_usec)/1000.0f);
+	// gettimeofday(&tv_end_all, NULL);
+	tv_end_all = std::chrono::high_resolution_clock::now();
+	msUpdate = 0.9*msUpdate + 0.1*std::chrono::duration_cast<std::chrono::milliseconds>(tv_end_all - tv_start_all).count();
 	nUpdate++;
 
 
@@ -1234,8 +1239,9 @@ void DepthMap::createKeyFrame(Frame* new_keyframe)
 	//boost::shared_lock<boost::shared_mutex> lock = activeKeyFrame->getActiveLock();
 	boost::shared_lock<boost::shared_mutex> lock2 = new_keyframe->getActiveLock();
 
-	std::time_t tv_start_all, tv_end_all;
-	gettimeofday(&tv_start_all, NULL);
+	timepoint_t tv_start_all, tv_end_all;
+	// gettimeofday(&tv_start_all, NULL);
+	tv_start_all = std::chrono::high_resolution_clock::now();
 
 
 	resetCounters();
@@ -1251,11 +1257,13 @@ void DepthMap::createKeyFrame(Frame* new_keyframe)
 
 	SE3 oldToNew_SE3 = se3FromSim3(new_keyframe->pose->thisToParent_raw).inverse();
 
-	std::time_t tv_start, tv_end;
-	gettimeofday(&tv_start, NULL);
+	timepoint_t tv_start, tv_end;
+	// gettimeofday(&tv_start, NULL);
+	tv_start = std::chrono::high_resolution_clock::now();
 	propagateDepth(new_keyframe);
-	gettimeofday(&tv_end, NULL);
-	msPropagate = 0.9*msPropagate + 0.1*((tv_end.tv_sec-tv_start.tv_sec)*1000.0f + (tv_end.tv_usec-tv_start.tv_usec)/1000.0f);
+	// gettimeofday(&tv_end, NULL);
+	tv_end = std::chrono::high_resolution_clock::now();
+	msPropagate = 0.9*msPropagate + 0.1*std::chrono::duration_cast<std::chrono::milliseconds>(tv_end - tv_start).count();
 	nPropagate++;
 
 	activeKeyFrame = new_keyframe;
@@ -1265,24 +1273,30 @@ void DepthMap::createKeyFrame(Frame* new_keyframe)
 
 
 
-	gettimeofday(&tv_start, NULL);
+	// gettimeofday(&tv_start, NULL);
+	tv_start = std::chrono::high_resolution_clock::now();
 	regularizeDepthMap(true, VAL_SUM_MIN_FOR_KEEP);
-	gettimeofday(&tv_end, NULL);
-	msRegularize = 0.9*msRegularize + 0.1*((tv_end.tv_sec-tv_start.tv_sec)*1000.0f + (tv_end.tv_usec-tv_start.tv_usec)/1000.0f);
+	// gettimeofday(&tv_end, NULL);
+	tv_end = std::chrono::high_resolution_clock::now();
+	msRegularize = 0.9*msRegularize + 0.1*std::chrono::duration_cast<std::chrono::milliseconds>(tv_end - tv_start).count();
 	nRegularize++;
 
 
-	gettimeofday(&tv_start, NULL);
+	// gettimeofday(&tv_start, NULL);
+	tv_start = std::chrono::high_resolution_clock::now();
 	regularizeDepthMapFillHoles();
-	gettimeofday(&tv_end, NULL);
-	msFillHoles = 0.9*msFillHoles + 0.1*((tv_end.tv_sec-tv_start.tv_sec)*1000.0f + (tv_end.tv_usec-tv_start.tv_usec)/1000.0f);
+	// gettimeofday(&tv_end, NULL);
+	tv_end = std::chrono::high_resolution_clock::now();
+	msFillHoles = 0.9*msFillHoles + 0.1*std::chrono::duration_cast<std::chrono::milliseconds>(tv_end - tv_start).count();
 	nFillHoles++;
 
 
-	gettimeofday(&tv_start, NULL);
+	// gettimeofday(&tv_start, NULL);
+	tv_start = std::chrono::high_resolution_clock::now();
 	regularizeDepthMap(false, VAL_SUM_MIN_FOR_KEEP);
-	gettimeofday(&tv_end, NULL);
-	msRegularize = 0.9*msRegularize + 0.1*((tv_end.tv_sec-tv_start.tv_sec)*1000.0f + (tv_end.tv_usec-tv_start.tv_usec)/1000.0f);
+	// gettimeofday(&tv_end, NULL);
+	tv_end = std::chrono::high_resolution_clock::now();
+	msRegularize = 0.9*msRegularize + 0.1*std::chrono::duration_cast<std::chrono::milliseconds>(tv_end - tv_start).count();
 	nRegularize++;
 
 
@@ -1313,14 +1327,17 @@ void DepthMap::createKeyFrame(Frame* new_keyframe)
 
 	// Update depth in keyframe
 
-	gettimeofday(&tv_start, NULL);
+	// gettimeofday(&tv_start, NULL);
+	tv_start = std::chrono::high_resolution_clock::now();
 	activeKeyFrame->setDepth(currentDepthMap);
-	gettimeofday(&tv_end, NULL);
-	msSetDepth = 0.9*msSetDepth + 0.1*((tv_end.tv_sec-tv_start.tv_sec)*1000.0f + (tv_end.tv_usec-tv_start.tv_usec)/1000.0f);
+	// gettimeofday(&tv_end, NULL);
+	tv_end = std::chrono::high_resolution_clock::now();
+	msSetDepth = 0.9*msSetDepth + 0.1*std::chrono::duration_cast<std::chrono::milliseconds>(tv_end - tv_start).count();
 	nSetDepth++;
 
-	gettimeofday(&tv_end_all, NULL);
-	msCreate = 0.9*msCreate + 0.1*((tv_end_all.tv_sec-tv_start_all.tv_sec)*1000.0f + (tv_end_all.tv_usec-tv_start_all.tv_usec)/1000.0f);
+	//gettimeofday(&tv_end_all, NULL);
+  tv_end_all = std::chrono::high_resolution_clock::now();
+	msCreate = 0.9*msCreate + 0.1*std::chrono::duration_cast<std::chrono::milliseconds>(tv_end_all - tv_start_all).count();
 	nCreate++;
 
 
@@ -1334,9 +1351,11 @@ void DepthMap::createKeyFrame(Frame* new_keyframe)
 
 void DepthMap::addTimingSample()
 {
-	std::time_t now;
-	gettimeofday(&now, NULL);
-	float sPassed = ((now.tv_sec-lastHzUpdate.tv_sec) + (now.tv_usec-lastHzUpdate.tv_usec)/1000000.0f);
+	timepoint_t now;
+	// gettimeofday(&now, NULL);
+	now = std::chrono::high_resolution_clock::now();
+	// float sPassed = ((now.tv_sec-lastHzUpdate.tv_sec) + (now.tv_usec-lastHzUpdate.tv_usec)/1000000.0f);
+	float sPassed = std::chrono::duration_cast<std::chrono::seconds>(now - lastHzUpdate).count();
 	if(sPassed > 1.0f)
 	{
 		nAvgUpdate = 0.8*nAvgUpdate + 0.2*(nUpdate / sPassed); nUpdate = 0;
@@ -1371,32 +1390,40 @@ void DepthMap::finalizeKeyFrame()
 	assert(isValid());
 
 
-	std::time_t tv_start_all, tv_end_all;
-	gettimeofday(&tv_start_all, NULL);
-	std::time_t tv_start, tv_end;
+	timepoint_t tv_start_all, tv_end_all;
+	//gettimeofday(&tv_start_all, NULL);
+  tv_start_all = std::chrono::high_resolution_clock::now();
+	timepoint_t tv_start, tv_end;
 
-	gettimeofday(&tv_start, NULL);
+	// gettimeofday(&tv_start, NULL);
+	tv_start = std::chrono::high_resolution_clock::now();
 	regularizeDepthMapFillHoles();
-	gettimeofday(&tv_end, NULL);
-	msFillHoles = 0.9*msFillHoles + 0.1*((tv_end.tv_sec-tv_start.tv_sec)*1000.0f + (tv_end.tv_usec-tv_start.tv_usec)/1000.0f);
+	// gettimeofday(&tv_end, NULL);
+	tv_end = std::chrono::high_resolution_clock::now();
+	msFillHoles = 0.9*msFillHoles + 0.1*std::chrono::duration_cast<std::chrono::milliseconds>(tv_end - tv_start).count();
 	nFillHoles++;
 
-	gettimeofday(&tv_start, NULL);
+	// gettimeofday(&tv_start, NULL);
+	tv_start = std::chrono::high_resolution_clock::now();
 	regularizeDepthMap(false, VAL_SUM_MIN_FOR_KEEP);
-	gettimeofday(&tv_end, NULL);
-	msRegularize = 0.9*msRegularize + 0.1*((tv_end.tv_sec-tv_start.tv_sec)*1000.0f + (tv_end.tv_usec-tv_start.tv_usec)/1000.0f);
+	// gettimeofday(&tv_end, NULL);
+	tv_end = std::chrono::high_resolution_clock::now();
+	msRegularize = 0.9*msRegularize + 0.1*std::chrono::duration_cast<std::chrono::milliseconds>(tv_end - tv_start).count();
 	nRegularize++;
 
-	gettimeofday(&tv_start, NULL);
+	// gettimeofday(&tv_start, NULL);
+	tv_start = std::chrono::high_resolution_clock::now();
 	activeKeyFrame->setDepth(currentDepthMap);
 	activeKeyFrame->calculateMeanInformation();
 	activeKeyFrame->takeReActivationData(currentDepthMap);
-	gettimeofday(&tv_end, NULL);
-	msSetDepth = 0.9*msSetDepth + 0.1*((tv_end.tv_sec-tv_start.tv_sec)*1000.0f + (tv_end.tv_usec-tv_start.tv_usec)/1000.0f);
+	// gettimeofday(&tv_end, NULL);
+	tv_end = std::chrono::high_resolution_clock::now();
+	msSetDepth = 0.9*msSetDepth + 0.1*std::chrono::duration_cast<std::chrono::milliseconds>(tv_end - tv_start).count();
 	nSetDepth++;
 
-	gettimeofday(&tv_end_all, NULL);
-	msFinalize = 0.9*msFinalize + 0.1*((tv_end_all.tv_sec-tv_start_all.tv_sec)*1000.0f + (tv_end_all.tv_usec-tv_start_all.tv_usec)/1000.0f);
+	//gettimeofday(&tv_end_all, NULL);
+  tv_end_all = std::chrono::high_resolution_clock::now();
+	msFinalize = 0.9*msFinalize + 0.1*std::chrono::duration_cast<std::chrono::milliseconds>(tv_end_all - tv_start_all).count();
 	nFinalize++;
 }
 
@@ -1796,7 +1823,7 @@ inline float DepthMap::doLineStereo(
 		{
 			// return exact pos, if both central gradients are small compared to their counterpart.
 			if(enablePrintDebugInfo && (gradPost_this*gradPost_this > 0.1f*0.1f*gradPost_post*gradPost_post ||
-			   gradPre_this*gradPre_this > 0.1f*0.1f*gradPre_pre*gradPre_pre))
+				 gradPre_this*gradPre_this > 0.1f*0.1f*gradPre_pre*gradPre_pre))
 				stats->num_stereo_invalid_inexistantCrossing++;
 		}
 

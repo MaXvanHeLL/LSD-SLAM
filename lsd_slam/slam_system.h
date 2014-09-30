@@ -19,6 +19,8 @@
 */
 
 #pragma once
+#include <chrono>
+#include <deque>
 #include <vector>
 #include <boost/thread.hpp>
 #include <boost/thread/shared_mutex.hpp>
@@ -114,7 +116,7 @@ public:
 	float msTrackFrame, msOptimizationIteration, msFindConstraintsItaration, msFindReferences;
 	int nTrackFrame, nOptimizationIteration, nFindConstraintsItaration, nFindReferences;
 	float nAvgTrackFrame, nAvgOptimizationIteration, nAvgFindConstraintsItaration, nAvgFindReferences;
-	struct timeval lastHzUpdate;
+  std::chrono::high_resolution_clock::time_point lastHzUpdate;
 
 
 private:
@@ -263,7 +265,7 @@ private:
 	void testConstraint(
 			Frame* candidate,
 			KFConstraintStruct* &e1_out, KFConstraintStruct* &e2_out,
-			Sim3 candidateToFrame_initialEstimate,
+			const Sim3& candidateToFrame_initialEstimate,
 			float strictness);
 
 	void optimizationThreadLoop();

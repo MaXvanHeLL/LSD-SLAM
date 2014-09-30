@@ -22,7 +22,7 @@
 
 #include <boost/thread.hpp>
 #include "util/settings.h"
-#include "util/globalFuncs.h"
+#include "util/global_funcs.h"
 #include "slam_system.h"
 
 

@@ -20,6 +20,7 @@
 
 #include "global_mapping/trackable_key_frame_search.h"
 
+#include <chrono>
 
 #include "global_mapping/key_frame_graph.h"
 #include "model/frame.h"
@@ -27,7 +28,6 @@
 
 namespace lsd_slam
 {
-
 
 TrackableKeyFrameSearch::TrackableKeyFrameSearch(KeyFrameGraph* graph, int w, int h, Eigen::Matrix3f K)
 : graph(graph)
@@ -120,11 +120,13 @@ Frame* TrackableKeyFrameSearch::findRePositionCandidate(Frame* frame, float maxS
 		if(potentialReferenceFrames[i].ref->idxInKeyframes < INITIALIZATION_PHASE_COUNT)
 			continue;
 
-		struct timeval tv_start, tv_end;
-		gettimeofday(&tv_start, NULL);
+		std::chrono::high_resolution_clock::time_point tv_start, tv_end;
+		//gettimeofday(&tv_start, NULL);
+		tv_start = std::chrono::high_resolution_clock::now();
 		tracker->checkPermaRefOverlap(potentialReferenceFrames[i].ref, potentialReferenceFrames[i].refToFrame);
-		gettimeofday(&tv_end, NULL);
-		msTrackPermaRef = 0.9*msTrackPermaRef + 0.1*((tv_end.tv_sec-tv_start.tv_sec)*1000.0f + (tv_end.tv_usec-tv_start.tv_usec)/1000.0f);
+		//gettimeofday(&tv_end, NULL);
+		tv_end = std::chrono::high_resolution_clock::now();
+		msTrackPermaRef = 0.9*msTrackPermaRef + 0.1*std::chrono::duration_cast<std::chrono::milliseconds>(tv_end - tv_start).count();
 		nTrackPermaRef++;
 
 		float score = getRefFrameScore(potentialReferenceFrames[i].dist, tracker->pointUsage);

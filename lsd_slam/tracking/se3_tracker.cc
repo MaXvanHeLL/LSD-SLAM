@@ -18,11 +18,12 @@
 * along with LSD-SLAM. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "SE3Tracker.h"
+#include "se3_tracker.h"
 #include <opencv2/highgui/highgui.hpp>
 #include "model/frame.h"
 #include "tracking/tracking_reference.h"
-#include "util/globalFuncs.h"
+#include "util/global_funcs.h"
+#include "util/snprintf.h"
 #include "io_wrapper/image_display.h"
 #include "Tracking/least_squares.h"
 
@@ -118,7 +119,7 @@ SE3Tracker::~SE3Tracker()
 // first_frame has depth, second_frame DOES NOT have depth.
 float SE3Tracker::checkPermaRefOverlap(
 		Frame* reference,
-		SE3 referenceToFrameOrg)
+		const SE3& referenceToFrameOrg)
 {
 	Sophus::SE3f referenceToFrame = referenceToFrameOrg.cast<float>();
 	boost::unique_lock<boost::mutex> lock2 = boost::unique_lock<boost::mutex>(reference->permaRef_mutex);
@@ -160,7 +161,7 @@ float SE3Tracker::checkPermaRefOverlap(
 SE3 SE3Tracker::trackFrameOnPermaref(
 		Frame* reference,
 		Frame* frame,
-		SE3 referenceToFrameOrg)
+		const SE3& referenceToFrameOrg)
 {
 
 	Sophus::SE3f referenceToFrame = referenceToFrameOrg.cast<float>();
