@@ -23,6 +23,7 @@
 #include "model/frame.h"
 #include "tracking/tracking_reference.h"
 #include "util/global_funcs.h"
+#include "util/snprintf.h"
 #include "io_wrapper/image_display.h"
 #include "Tracking/least_squares.h"
 

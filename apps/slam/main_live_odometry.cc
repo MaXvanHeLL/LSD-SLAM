@@ -26,9 +26,9 @@
 #include "slam_system.h"
 
 
-#include "IOWrapper/ROS/ROSImageStreamThread.h"
-#include "IOWrapper/ROS/ROSOutput3DWrapper.h"
-#include "IOWrapper/ROS/rosReconfigure.h"
+//#include "IOWrapper/ROS/ROSImageStreamThread.h"
+//#include "IOWrapper/ROS/ROSOutput3DWrapper.h"
+//#include "IOWrapper/ROS/rosReconfigure.h"
 
 
 using namespace lsd_slam;

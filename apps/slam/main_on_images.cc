@@ -30,13 +30,59 @@
 #include <dirent.h>
 #include <algorithm>
 
-#include "IOWrapper/ROS/ROSOutput3DWrapper.h"
-#include "IOWrapper/ROS/rosReconfigure.h"
+//#include "IOWrapper/ROS/ROSOutput3DWrapper.h"
+//#include "IOWrapper/ROS/rosReconfigure.h"
 
-#include "util/Undistorter.h"
-#include <ros/package.h>
+#include "util/undistorter.h"
+//#include <ros/package.h>
 
 #include "opencv2/opencv.hpp"
+
+
+
+// Gets current projection matrix (= PerspectiveMatrix * CameraPoseMatrix)
+template<typename Tracker>
+Eigen::Matrix<double, 3, 4> get_projection(Tracker& tracker) {
+    std::vector<double> cam_params = tracker.GetCameraParams();
+    Eigen::Matrix3d intrinsics = Eigen::Matrix3d::Identity();
+    intrinsics(0, 0) = cam_params[0];
+    intrinsics(1, 1) = cam_params[1];
+    intrinsics(0, 2) = cam_params[2];
+    intrinsics(1, 2) = cam_params[3];
+
+    std::vector<double> rot = tracker.GetCurrentPose();
+    Eigen::Matrix<double, 3, 3> mrot;
+    mrot << rot[0], rot[1], rot[2],
+            rot[3], rot[4], rot[5],
+            rot[6], rot[7], rot[8];
+    Eigen::Matrix<double, 3, 4> pose;
+    pose.setZero();
+    pose.block<3, 3>(0, 0) = mrot;
+
+    Eigen::Matrix<double, 3, 4> projection = intrinsics * pose;
+    return projection;
+}
+
+// Draws desirable target in world coordinate to current color image
+template<typename Tracker>
+void draw_target(cv::Mat& rgb_img, Tracker& tracker) {
+    const Eigen::Vector4d point_x(0.1, 0, 1, 1);
+    const Eigen::Vector4d point_y(0, 0.1, 1, 1);
+    const Eigen::Vector4d point_z(0, 0, 1.1, 1);
+    const Eigen::Vector4d point_target(0, 0, 1.0, 1);
+    Eigen::Matrix<double, 3, 4> proj = get_projection(tracker);
+    Eigen::Vector3d point_cam = proj * point_target;
+    Eigen::Vector3d pointx_cam = proj * point_x;
+    Eigen::Vector3d pointy_cam = proj * point_y;
+    Eigen::Vector3d pointz_cam = proj * point_z;
+    cv::line(rgb_img, cv::Point(point_cam[0], point_cam[1]),
+             cv::Point(pointx_cam[0], pointx_cam[1]), cv::Scalar(255, 0, 0), 3);
+    cv::line(rgb_img, cv::Point(point_cam[0], point_cam[1]),
+             cv::Point(pointy_cam[0], pointy_cam[1]), cv::Scalar(0, 255, 0), 3);
+    cv::line(rgb_img, cv::Point(point_cam[0], point_cam[1]),
+             cv::Point(pointz_cam[0], pointz_cam[1]), cv::Scalar(0, 0, 255), 3);
+}
+
 
 std::string &ltrim(std::string &s) {
         s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
@@ -127,15 +173,15 @@ int getFile (std::string source, std::vector<std::string> &files)
 using namespace lsd_slam;
 int main( int argc, char** argv )
 {
-	ros::init(argc, argv, "LSD_SLAM");
+	//ros::init(argc, argv, "LSD_SLAM");
 
-	dynamic_reconfigure::Server<lsd_slam_core::LSDParamsConfig> srv(ros::NodeHandle("~"));
-	srv.setCallback(dynConfCb);
+	//dynamic_reconfigure::Server<lsd_slam_core::LSDParamsConfig> srv(ros::NodeHandle("~"));
+	//srv.setCallback(dynConfCb);
 
-	dynamic_reconfigure::Server<lsd_slam_core::LSDDebugParamsConfig> srvDebug(ros::NodeHandle("~Debug"));
-	srvDebug.setCallback(dynConfCbDebug);
+	//dynamic_reconfigure::Server<lsd_slam_core::LSDDebugParamsConfig> srvDebug(ros::NodeHandle("~Debug"));
+	//srvDebug.setCallback(dynConfCbDebug);
 
-	packagePath = ros::package::getPath("lsd_slam_core")+"/";
+	//packagePath = ros::package::getPath("lsd_slam_core")+"/";
 
 
 
@@ -143,11 +189,14 @@ int main( int argc, char** argv )
 	// if no undistortion is required, the undistorter will just pass images through.
 	std::string calibFile;
 	Undistorter* undistorter = 0;
-	if(ros::param::get("~calib", calibFile))
+	/*if(ros::param::get("~calib", calibFile))
 	{
 		 undistorter = Undistorter::getUndistorterForFile(calibFile.c_str());
 		 ros::param::del("~calib");
-	}
+	}*/
+
+  const std::string fn = "C:/Users/Thanh/dev/bb_lsd_slam/data/OpenCV_example_calib.cfg";
+  undistorter = Undistorter::getUndistorterForFile(fn.c_str());
 
 	if(undistorter == 0)
 	{
@@ -166,7 +215,7 @@ int main( int argc, char** argv )
 
 
 	// make output wrapper. just set to zero if no output is required.
-	Output3DWrapper* outputWrapper = new ROSOutput3DWrapper(w,h);
+	Output3DWrapper* outputWrapper = nullptr; // new ROSOutput3DWrapper(w,h);
 
 
 	// make slam system
@@ -175,37 +224,52 @@ int main( int argc, char** argv )
 
 
 
-	// open image files: first try to open as file.
-	std::string source;
+	// // open image files: first try to open as file.
+	// std::string source;
+	// std::vector<std::string> files;
+	// if(!ros::param::get("~files", source))
+	// {
+	// 	printf("need source files! (set using _files:=FOLDER)\n");
+	// 	exit(0);
+	// }
+	// ros::param::del("~files");
+
+
+	// if(getdir(source, files) >= 0)
+	// {
+	// 	printf("found %d image files in folder %s!\n", (int)files.size(), source.c_str());
+	// }
+	// else if(getFile(source, files) >= 0)
+	// {
+	// 	printf("found %d image files in file %s!\n", (int)files.size(), source.c_str());
+	// }
+	// else
+	// {
+	// 	printf("could not load file list! wrong path / file?\n");
+	// }
+
+	const std::string filename = "C:/Users/Thanh/dev/bb_lsd_slam/data/plane_sequence/fusion_recorder.txt";
+	std::ifstream ifs(filename);
+	if (ifs.fail()) {
+		printf("Fail to read file:%s\n", filename.c_str());
+		return -1;
+	}
+
 	std::vector<std::string> files;
-	if(!ros::param::get("~files", source))
-	{
-		printf("need source files! (set using _files:=FOLDER)\n");
-		exit(0);
-	}
-	ros::param::del("~files");
-
-
-	if(getdir(source, files) >= 0)
-	{
-		printf("found %d image files in folder %s!\n", (int)files.size(), source.c_str());
-	}
-	else if(getFile(source, files) >= 0)
-	{
-		printf("found %d image files in file %s!\n", (int)files.size(), source.c_str());
-	}
-	else
-	{
-		printf("could not load file list! wrong path / file?\n");
+	while (!ifs.eof()) {
+		std::string tag;
+		double time;
+		std::string fn;
+		ifs >> tag >> time >> fn;
+		files.push_back(fn);
+		printf("frame:%s\n", fn.c_str());
 	}
 
-
-
-	// get HZ
-	double hz = 0;
-	if(!ros::param::get("~hz", hz))
-		hz = 0;
-	ros::param::del("~hz");
+	//// get HZ
+	//double hz = 0;
+	//if(!ros::param::get("~hz", hz))
+	//	hz = 0;
+	//ros::param::del("~hz");
 
 
 
@@ -213,7 +277,7 @@ int main( int argc, char** argv )
 	int runningIDX=0;
 	float fakeTimeStamp = 0;
 
-	ros::Rate r(hz);
+	//ros::Rate r(hz);
 
 	for(unsigned int i=0;i<files.size();i++)
 	{
@@ -237,12 +301,12 @@ int main( int argc, char** argv )
 		if(runningIDX == 0)
 			system->randomInit(image.data, fakeTimeStamp, runningIDX);
 		else
-			system->trackFrame(image.data, runningIDX ,hz == 0,fakeTimeStamp);
+			system->trackFrame(image.data, runningIDX , false,fakeTimeStamp);
 		runningIDX++;
 		fakeTimeStamp+=0.03;
 
-		if(hz != 0)
-			r.sleep();
+		//if(hz != 0)
+		//	r.sleep();
 
 		if(fullResetRequested)
 		{
@@ -257,7 +321,7 @@ int main( int argc, char** argv )
 			runningIDX = 0;
 		}
 
-		ros::spinOnce();
+		//ros::spinOnce();
 	}
 
 
