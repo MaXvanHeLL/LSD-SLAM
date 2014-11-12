@@ -20,6 +20,8 @@
 
 #include "model/frame_memory.h"
 #include "model/frame.h"
+#include <memory>
+#include <Eigen/Core>
 
 namespace lsd_slam
 {
@@ -51,7 +53,8 @@ void FrameMemory::releaseBuffes()
 
 		for(unsigned int i=0;i<p.second.size();i++)
 		{
-			delete (char*)p.second[i];
+			//delete (char*)p.second[i];
+			Eigen::internal::aligned_free(p.second[i]);
 			bufferSizes.erase(p.second[i]);
 		}
 
@@ -121,7 +124,8 @@ void* FrameMemory::allocateBuffer(unsigned int size)
 {
 	//printf("allocateFloatBuffer(%d)\n", size);
 	
-	void* buffer = (void*)(new char[size]);
+	//void* buffer = (void*)(new char[size]);
+	void* buffer = Eigen::internal::aligned_malloc(sizeof(char)*size);
 	bufferSizes.insert(std::make_pair(buffer, size));
 	return buffer;
 }

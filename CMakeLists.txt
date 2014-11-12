@@ -10,11 +10,13 @@ include_directories(${LSD_SLAM_DIR} ${LSD_SLAM_DIR}/lsd_slam)
 
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 if(WIN32)
+  add_definitions(-DEIGEN_DONT_ALIGN_STATICALLY) 
   add_definitions(-DNOMINMAX) # resolve conflicts of std::min()/std::max() on Windows MSVC
   add_definitions(-DWIN32_LEAN_AND_MEAN) # speed up compiler by omitting some headers
   add_definitions(-DM_SQRT1_2=0.707106781186547524401) # missing in MSVC2013
   add_definitions(-DM_PI=3.14159265358979323846) # missing in MSVC2013
   add_definitions("/MP")  # multiple processes compilation
+  add_definitions(-D_SECURE_SCL=0)
 endif(WIN32)
 
 set(EXECUTABLE_OUTPUT_PATH ${LSD_SLAM_DIR}/bin)
@@ -102,6 +104,7 @@ endif()
 if(G2O_SOLVER_CSPARSE AND NOT APPLE)
   if(WIN32)
     list(APPEND G2O_INCLUDE_DIR "${G2O_ROOT}/include/EXTERNAL/csparse")
+    list(APPEND G2O_INCLUDE_DIR "$ENV{G2O_ROOT}/include/EXTERNAL/csparse")
   else()
     list(APPEND G2O_INCLUDE_DIR "/usr/include/suitesparse")
   endif()
@@ -139,7 +142,7 @@ list(APPEND EXTERNAL_LIBRARIES ${G2O_LIBRARIES})
 # Direct API
 include_directories("${LSD_SLAM_DIR}/thirdparty/dirent-1.20.1/include")
 
-set(ALL_LIBRARIES ${G2O_LIBRARIES} ${FABMAP_LIB})
+set(ALL_LIBRARIES ${G2O_LIBRARIES} ${FABMAP_LIB} ${EXTERNAL_LIBRARIES})
 
 if(ANDROID)
   add_definitions(-DENABLE_NEON)

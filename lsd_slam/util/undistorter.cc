@@ -62,15 +62,16 @@ Undistorter* Undistorter::getUndistorterForFile(const char* configFilename)
 	printf(" ... found!\n");
 
 	std::string l1;
+	std::string l2;
 	std::getline(f,l1);
+	std::getline(f,l2);	
 	f.close();
 
 
 
-	float ic[10];
-	if(std::sscanf(l1.c_str(), "%f %f %f %f %f %f %f %f %f %f",
-			&ic[0], &ic[1], &ic[2], &ic[3], &ic[4],
-			&ic[5], &ic[6], &ic[7], &ic[8], &ic[9]) == 10)
+	//float ic[10];
+	//if(std::sscanf(l1.c_str(), "%f %f %f %f %f %f %f %f %f %f", &ic[0], &ic[1], &ic[2], &ic[3], &ic[4], &ic[5], &ic[6], &ic[7], &ic[8], &ic[9]) == 10)
+	if (l2 == "<opencv_storage>")
 	{
 		printf("found OpenCV camera model, building rectifier.\n");
 		Undistorter* u = new UndistorterOpenCV(completeFileName.c_str());
@@ -443,99 +444,118 @@ UndistorterOpenCV::UndistorterOpenCV(const char* configFileName)
 	std::ifstream infile(configFileName);
 	assert(infile.good());
 
-	std::string l1, l2, l3, l4;
-
-	std::getline(infile,l1);
-	std::getline(infile,l2);
-	std::getline(infile,l3);
-	std::getline(infile,l4);
-
-	// l1 & l2
-	if(std::sscanf(l1.c_str(), "%f %f %f %f %f %f %f %f %f %f",
-		&inputCalibration[0], &inputCalibration[1], &inputCalibration[2], &inputCalibration[3], &inputCalibration[4],
-		&inputCalibration[5], &inputCalibration[6], &inputCalibration[7], &inputCalibration[8], &inputCalibration[9]
-  				) == 10 &&
-			std::sscanf(l2.c_str(), "%d %d", &in_width, &in_height) == 2)
-	{
-		printf("Input resolution: %d %d\n",in_width, in_height);
-		printf("In: %f %f %f %f %f %f %f %f %f %f\n",
-				inputCalibration[0], inputCalibration[1], inputCalibration[2], inputCalibration[3], inputCalibration[4],
-				inputCalibration[5], inputCalibration[6], inputCalibration[7], inputCalibration[8], inputCalibration[9]);
-	}
-	else
-	{
-		printf("Failed to read camera calibration (invalid format?)\nCalibration file: %s\n", configFileName);
-		valid = false;
-	}
-
-	// l3
-	if(l3 == "crop")
-	{
-		outputCalibration = -1;
-		printf("Out: Crop\n");
-	}
-	else if(l3 == "full")
-	{
-		outputCalibration = -2;
-		printf("Out: Full\n");
-	}
-	else if(l3 == "none")
-	{
-		printf("NO RECTIFICATION\n");
-		valid = false;
-	}
-	else
-	{
-		printf("Out: Failed to Read Output pars... not rectifying.\n");
-		valid = false;
-	}
-
-	// l4
-	if(std::sscanf(l4.c_str(), "%d %d", &out_width, &out_height) == 2)
-	{
-		printf("Output resolution: %d %d\n", out_width, out_height);
-	}
-	else
-	{
-		printf("Out: Failed to Read Output resolution... not rectifying.\n");
-		valid = false;
-	}
+	cv::Mat camera_matrix;
+	cv::Mat distortion_coefficients;
+	int img_width, img_height;
 	
-	cv::Mat distCoeffs = cv::Mat::zeros(8, 1, CV_32F);
-	for (int i = 0; i < 2; ++ i)
-		distCoeffs.at<float>(i, 0) = inputCalibration[4 + i];
-	for (int i = 0; i < 4; ++ i)
-		distCoeffs.at<float>(4 + i, 0) = inputCalibration[6 + i];
+	cv::FileStorage fs(configFileName, cv::FileStorage::READ);
+	fs["Camera_Matrix"] >> camera_matrix;
+	fs["Distortion_Coefficients"] >> distortion_coefficients;
+	fs["image_Width"] >> img_width;
+	fs["image_Height"] >> img_height;
+	out_width = img_width;
+	out_height = img_height;
+	fs.release();
+	cv::Size new_img_size(out_width, out_height);
 	
-	originalK_ = cv::Mat(3, 3, CV_64F, cv::Scalar(0));
-	originalK_.at<double>(0, 0) = inputCalibration[0] * in_width;
-	originalK_.at<double>(1, 1) = inputCalibration[1] * in_height;
-	originalK_.at<double>(2, 2) = 1;
-	originalK_.at<double>(0, 2) = inputCalibration[2] * in_width;
-	originalK_.at<double>(1, 2) = inputCalibration[3] * in_height;
+	outputCalibration = 1; // [0..1] 
+	K_ = cv::getOptimalNewCameraMatrix(camera_matrix, distortion_coefficients, cv::Size(img_width, img_height), outputCalibration, new_img_size, nullptr, false);
+	cv::initUndistortRectifyMap(camera_matrix, distortion_coefficients, cv::Mat(), K_, new_img_size, CV_16SC2, map1, map2);
 
-	if (valid)
-	{
-		K_ = cv::getOptimalNewCameraMatrix(originalK_, distCoeffs, cv::Size(in_width, in_height), (outputCalibration == -2) ? 1 : 0, cv::Size(out_width, out_height), nullptr, false);
-		
-		cv::initUndistortRectifyMap(originalK_, distCoeffs, cv::Mat(), K_,
-				cv::Size(out_width, out_height), CV_16SC2, map1, map2);
-		
-// 		K_.at<double>(0, 0) /= out_width;
-// 		K_.at<double>(0, 2) /= out_width;
-// 		K_.at<double>(1, 1) /= out_height;
-// 		K_.at<double>(1, 2) /= out_height;
-		// TODO: PTAM code uses the following, should here also 0.5 be subtracted?
-// 		K_.at<double>(2, 0) = outputCalibration[2] * out_width - 0.5;
-// 		K_.at<double>(2, 1) = outputCalibration[3] * out_height - 0.5;
-		
-		originalK_.at<double>(0, 0) /= in_width;
-		originalK_.at<double>(0, 2) /= in_width;
-		originalK_.at<double>(1, 1) /= in_height;
-		originalK_.at<double>(1, 2) /= in_height;
-	}
-	
-	originalK_ = originalK_.t();
+//
+//	std::string l1, l2, l3, l4;
+//
+//	std::getline(infile,l1);
+//	std::getline(infile,l2);
+//	std::getline(infile,l3);
+//	std::getline(infile,l4);
+//
+//	// l1 & l2
+//	if(std::sscanf(l1.c_str(), "%f %f %f %f %f %f %f %f %f %f",
+//		&inputCalibration[0], &inputCalibration[1], &inputCalibration[2], &inputCalibration[3], &inputCalibration[4],
+//		&inputCalibration[5], &inputCalibration[6], &inputCalibration[7], &inputCalibration[8], &inputCalibration[9]
+//  				) == 10 &&
+//			std::sscanf(l2.c_str(), "%d %d", &in_width, &in_height) == 2)
+//	{
+//		printf("Input resolution: %d %d\n",in_width, in_height);
+//		printf("In: %f %f %f %f %f %f %f %f %f %f\n",
+//				inputCalibration[0], inputCalibration[1], inputCalibration[2], inputCalibration[3], inputCalibration[4],
+//				inputCalibration[5], inputCalibration[6], inputCalibration[7], inputCalibration[8], inputCalibration[9]);
+//	}
+//	else
+//	{
+//		printf("Failed to read camera calibration (invalid format?)\nCalibration file: %s\n", configFileName);
+//		valid = false;
+//	}
+//
+//	// l3
+//	if(l3 == "crop")
+//	{
+//		outputCalibration = -1;
+//		printf("Out: Crop\n");
+//	}
+//	else if(l3 == "full")
+//	{
+//		outputCalibration = -2;
+//		printf("Out: Full\n");
+//	}
+//	else if(l3 == "none")
+//	{
+//		printf("NO RECTIFICATION\n");
+//		valid = false;
+//	}
+//	else
+//	{
+//		printf("Out: Failed to Read Output pars... not rectifying.\n");
+//		valid = false;
+//	}
+//
+//	// l4
+//	if(std::sscanf(l4.c_str(), "%d %d", &out_width, &out_height) == 2)
+//	{
+//		printf("Output resolution: %d %d\n", out_width, out_height);
+//	}
+//	else
+//	{
+//		printf("Out: Failed to Read Output resolution... not rectifying.\n");
+//		valid = false;
+//	}
+//	
+//	cv::Mat distCoeffs = cv::Mat::zeros(8, 1, CV_32F);
+//	for (int i = 0; i < 2; ++ i)
+//		distCoeffs.at<float>(i, 0) = inputCalibration[4 + i];
+//	for (int i = 0; i < 4; ++ i)
+//		distCoeffs.at<float>(4 + i, 0) = inputCalibration[6 + i];
+//	
+//	originalK_ = cv::Mat(3, 3, CV_64F, cv::Scalar(0));
+//	originalK_.at<double>(0, 0) = inputCalibration[0] * in_width;
+//	originalK_.at<double>(1, 1) = inputCalibration[1] * in_height;
+//	originalK_.at<double>(2, 2) = 1;
+//	originalK_.at<double>(0, 2) = inputCalibration[2] * in_width;
+//	originalK_.at<double>(1, 2) = inputCalibration[3] * in_height;
+//
+//	if (valid)
+//	{
+//		K_ = cv::getOptimalNewCameraMatrix(originalK_, distCoeffs, cv::Size(in_width, in_height), (outputCalibration == -2) ? 1 : 0, cv::Size(out_width, out_height), nullptr, false);
+//		
+//		cv::initUndistortRectifyMap(originalK_, distCoeffs, cv::Mat(), K_,
+//				cv::Size(out_width, out_height), CV_16SC2, map1, map2);
+//		
+//// 		K_.at<double>(0, 0) /= out_width;
+//// 		K_.at<double>(0, 2) /= out_width;
+//// 		K_.at<double>(1, 1) /= out_height;
+//// 		K_.at<double>(1, 2) /= out_height;
+//		// TODO: PTAM code uses the following, should here also 0.5 be subtracted?
+//// 		K_.at<double>(2, 0) = outputCalibration[2] * out_width - 0.5;
+//// 		K_.at<double>(2, 1) = outputCalibration[3] * out_height - 0.5;
+//		
+//		originalK_.at<double>(0, 0) /= in_width;
+//		originalK_.at<double>(0, 2) /= in_width;
+//		originalK_.at<double>(1, 1) /= in_height;
+//		originalK_.at<double>(1, 2) /= in_height;
+//	}
+//	
+	originalK_ = camera_matrix.t();
 	K_ = K_.t();
 }
 

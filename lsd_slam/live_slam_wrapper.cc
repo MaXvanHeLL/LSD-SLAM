@@ -31,6 +31,7 @@
 #include "util/global_funcs.h"
 
 #include <iostream>
+#include <opencv\highgui.h>
 
 namespace lsd_slam
 {
@@ -104,8 +105,13 @@ void LiveSLAMWrapper::Loop()
 		imageStream->getBuffer()->popFront();
 		
 		// process image
-		//Util::displayImage("MyVideo", image.data);
+		Util::displayImage("MyVideo", image.data);
 		newImageCallback(image.data, image.timestamp);
+		auto key = cvWaitKey(10); //Capture Keyboard stroke
+		if (char(key) == 27){
+			break; //If you hit ESC key loop will break.
+		}
+		
 	}
 }
 
