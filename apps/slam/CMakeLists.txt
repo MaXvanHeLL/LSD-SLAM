@@ -13,4 +13,4 @@ project(slam_app)
 ## only this works at the moment
 add_executable(sample_app sample_app.cc)
 set_property(TARGET sample_app PROPERTY FOLDER "lsd_slam/apps")
-target_link_libraries(sampleAppLsdSlam_ALL_LIBRARIES)
+target_link_libraries(sample_app ${LsdSlam_ALL_LIBRARIES})

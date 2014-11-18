@@ -8,23 +8,21 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake
                               ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules
                               ${CMAKE_CURRENT_BINARY_DIR})
 include(LsdSlamUtil)  # include useful macros
-lsd_slam_print_status("Closure cmake modules: ${Closure_COLOR_BLUE}${CMAKE_MODULE_PATH}${Closure_COLOR_RESET}")
+lsd_slam_print_status("Closure cmake modules: ${LsdSlam_COLOR_BLUE}${CMAKE_MODULE_PATH}${LsdSlam_COLOR_RESET}")
 
 set(LsdSlam_WORLD_VERSION 1)
 set(LsdSlam_MAJOR_VERSION 0)
 set(LsdSlam_MINOR_VERSION 0)
-lsd_slam_print_status("Welcome! Closure version ${Closure_COLOR_BLUE}${Closure_WORLD_VERSION}.${Closure_MAJOR_VERSION}.${Closure_MINOR_VERSION}${Closure_COLOR_RESET}")
+lsd_slam_print_status("Welcome! Closure version ${LsdSlam_COLOR_BLUE}${LsdSlam_WORLD_VERSION}.${LsdSlam_MAJOR_VERSION}.${LsdSlam_MINOR_VERSION}${LsdSlam_COLOR_RESET}")
 
 # common settings
 set(LsdSlam_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(LsdSlam_LIB_PREFIX closure_)
 set(LsdSlam_CXX_FLAGS)
 
-add_definitions(-DLsdSlam_DIR="${Closure_ROOT_DIR}")
+add_definitions(-DLsdSlam_DIR="${LsdSlam_DIR}")
 
 # common settings ==============================================================
-
-# common settings
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(LSD_SLAM_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${LSD_SLAM_DIR} ${LSD_SLAM_DIR}/lsd_slam)
@@ -51,17 +49,45 @@ elseif(CMAKE_BUILD_TYPE MATCHES MinSizeRel)
   set(EXE_POSTFIX ${CMAKE_MINSIZEREL_POSTFIX})
 endif(CMAKE_BUILD_TYPE MATCHES Release)
   
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
-  
-# Second, for multi-config builds (e.g. msvc)
-foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
-  string( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )
-  set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${CMAKE_CURRENT_SOURCE_DIR}/bin")
-  set( CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${CMAKE_CURRENT_SOURCE_DIR}/lib")
-  set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} "${CMAKE_CURRENT_SOURCE_DIR}/lib")
-endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
+set(LsdSlam_RUNTIME_OUTPUT_DIRECTORY ${LsdSlam_ROOT_DIR}/bin CACHE PATH "Target for the binaries")
+set(LsdSlam_LIBRARY_OUTPUT_DIRECTORY ${LsdSlam_ROOT_DIR}/lib CACHE PATH "Target for the libraries")
+link_directories(${LsdSlam_LIBRARY_OUTPUT_DIRECTORY})
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${LsdSlam_LIBRARY_OUTPUT_DIRECTORY})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${LsdSlam_LIBRARY_OUTPUT_DIRECTORY})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${LsdSlam_RUNTIME_OUTPUT_DIRECTORY})
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${LsdSlam_LIBRARY_OUTPUT_DIRECTORY})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${LsdSlam_LIBRARY_OUTPUT_DIRECTORY})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${LsdSlam_RUNTIME_OUTPUT_DIRECTORY})
+
+# Detect OS and define macros appropriately
+if(WIN32)
+  add_definitions(-DWINDOWS)
+  lsd_slam_print_status("Compiling for Windows")
+elseif(ANDROID)
+  add_definitions(-DANDROID)
+  lsd_slam_print_status("Compiling for Android")
+elseif(APPLE)
+  add_definitions(-DAPPLE)
+  MESSAGE(STATUS "Compiling for OSX")
+elseif(UNIX)
+  add_definitions(-DUNIX)
+  MESSAGE(STATUS "Compiling for Unix")
+else()
+  closure_print_error("We don't support this platform!!!")
+endif(WIN32)
+
+set(CMAKE_CXX_FLAGS ${LsdSlam_CXX_FLAGS})
+lsd_slam_common_build_setting()
+
+# Allow the developer to select if Dynamic or Static libraries are built
+option(LsdSlam_BUILD_SHARED_LIBS "Build Shared Libraries (preferred and required for the g2o plugin system)" OFF)
+set(LsdSlam_LIB_TYPE STATIC)
+if(LsdSlam_BUILD_SHARED_LIBS)
+  set(LsdSlam_LIB_TYPE SHARED)
+  add_definitions(-DLsdSlam_SHARED_LIBS)
+endif()
 
 # External dependencies ========================================================
 if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/LsdSlamDependencies_Config.cmake")
@@ -74,15 +100,16 @@ include(LsdSlamDependencies_Config)
 include(LsdSlamDependencies)
 
 # Thirdparty libs ==============================================================
+# Eigen
 include_directories(${LSD_SLAM_DIR}/thirdparty/eigen-3.2.1)
+
+# Sophus
 include_directories(${LSD_SLAM_DIR}/thirdparty/Sophus)
 
 # FabMap
-# uncomment this part to enable fabmap
-#add_subdirectory(${LSD_SLAM_DIR}/thirdparty/openFabMap)
-#include_directories(${LSD_SLAM_DIR}/thirdparty/openFabMap/include)
-#add_definitions("-DHAVE_FABMAP")
-#set(FABMAP_LIB openFABMAP )
+include_directories(${LSD_SLAM_DIR}/thirdparty/openFabMap/include)
+add_definitions("-DHAVE_FABMAP")
+set(FABMAP_LIB openFABMAP )
 
 # Direct API
 include_directories("${LSD_SLAM_DIR}/thirdparty/dirent-1.20.1/include")
@@ -150,7 +177,7 @@ if(WIN32)
   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/scripts/set_paths.bat.in" 
                  "${CMAKE_CURRENT_BINARY_DIR}/set_paths.bat")
   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/scripts/set_paths.bat.in" 
-                 "${Closure_RUNTIME_OUTPUT_DIRECTORY}/set_paths.bat")
+                 "${LsdSlam_RUNTIME_OUTPUT_DIRECTORY}/set_paths.bat")
   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/scripts/set_paths_and_run_vc.bat.in"
                  "${CMAKE_CURRENT_BINARY_DIR}/set_paths_and_run_vc.bat")
 endif()
