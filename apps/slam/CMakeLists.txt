@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 2.8.9)
 project(slam_app)
 
 ## demos
@@ -11,6 +11,6 @@ project(slam_app)
 #target_link_libraries(main_live_odometry ${ALL_LIBRARIES} ${OpenCV_LIBRARIES} "C:/projects/uni/dissertation/Libraries/icg_lsd_slam/lsd-slam/lib/lsd_slam.lib")
 
 ## only this works at the moment
-add_executable(sampleApp sampleApp.cpp)
-set_property(TARGET sampleApp PROPERTY FOLDER "lsd_slam/apps")
-target_link_libraries(sampleApp ${ALL_LIBRARIES} ${OpenCV_LIBRARIES} "C:/projects/uni/dissertation/Libraries/icg_lsd_slam/lsd-slam/lib/lsd_slam.lib")
+add_executable(sample_app sample_app.cc)
+set_property(TARGET sample_app PROPERTY FOLDER "lsd_slam/apps")
+target_link_libraries(sampleAppLsdSlam_ALL_LIBRARIES)
