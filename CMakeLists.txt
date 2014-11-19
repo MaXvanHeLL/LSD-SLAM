@@ -75,7 +75,7 @@ elseif(UNIX)
   add_definitions(-DUNIX)
   MESSAGE(STATUS "Compiling for Unix")
 else()
-  closure_print_error("We don't support this platform!!!")
+  lsd_slam_print_error("We don't support this platform!!!")
 endif(WIN32)
 
 set(CMAKE_CXX_FLAGS ${LsdSlam_CXX_FLAGS})
@@ -96,7 +96,7 @@ if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/LsdSlamDependencies_Config.cmake")
   file(RENAME "${CMAKE_CURRENT_BINARY_DIR}/LsdSlamDependencies_Config.cmake.in"
               "${CMAKE_CURRENT_BINARY_DIR}/LsdSlamDependencies_Config.cmake")
 endif()
-include(LsdSlamDependencies_Config)
+include(LsdSlamDependencies_Config)  # option for manual configuration
 include(LsdSlamDependencies)
 
 # Thirdparty libs ==============================================================
@@ -109,12 +109,13 @@ include_directories(${LSD_SLAM_DIR}/thirdparty/Sophus)
 # FabMap
 include_directories(${LSD_SLAM_DIR}/thirdparty/openFabMap/include)
 add_definitions("-DHAVE_FABMAP")
-set(FABMAP_LIB openFABMAP )
+#set(FABMAP_LIB openFABMAP )  # no need, only *.dll generated
 
 # Direct API
 include_directories("${LSD_SLAM_DIR}/thirdparty/dirent-1.20.1/include")
 
 set(LsdSlam_ALL_LIBRARIES ${FABMAP_LIB} ${LsdSlam_EXTERNAL_LIBS})
+lsd_slam_print_status("LsdSlam_ALL_LIBRARIES:${LsdSlam_ALL_LIBRARIES}")
 
 if(ANDROID)
   add_definitions(-DENABLE_NEON)

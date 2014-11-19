@@ -5,15 +5,15 @@ set(msg
   "BEGIN NOTEs for dependencies configuration =================================\n"
   "You can configure dependencies in a single config file (${CMAKE_CURRENT_BINARY_DIR}/LsdSlamDependencies_Config.cmake \n"
   "There are sample configuration paths in the file\n"
-  "To use this config file, change to USE_THIS_CONFIG_FILE to TRUE\n"
+  "To use this config file, change to LsdSlam_USE_MANUAL_CONFIG_FILE to TRUE\n"
   "END NOTEs for dependencies configuration ===================================\n"
 )
 
 lsd_slam_print_status(${msg})
 
-set(USE_THIS_CONFIG_FILE TRUE)
+option(LsdSlam_USE_MANUAL_CONFIG_FILE OFF)
 
-if(USE_THIS_CONFIG_FILE)  # set to true here to manually configure
+if(LsdSlam_USE_MANUAL_CONFIG_FILE)  # set to true here to manually configure
 ## Required dependencies =======================================================
 # Boost
 set(BOOST_ROOT D:/dev/gitlab_structural_modeling/precompiled/x86/vc12/prebuilts/boost)
@@ -50,8 +50,8 @@ endif()
 
 # Freeglut
 set(GLUT_INCLUDE_DIR D:/deps_msvc_common/freeglut-2.8.1/include)
-set(GLUT_glut_LIBRARY D:/deps_msvc_common/freeglut-2.8.1/lib/x86/freeglut.lib)
-set(GLUT_BINARY_DIR "D:/deps_msvc_common/freeglut-2.8.1/lib/x86")
+#set(GLUT_glut_LIBRARY D:/deps_msvc_common/freeglut-2.8.1/lib/x86/freeglut.lib)
+set(GLUT_BINARY_DIR "${GLUT_INCLUDE_DIR}/../lib/x86")
 if(ANDROID)
   set(GLUT_FOUND TRUE)
   set(GLUT_LIBRARIES C:/Users/Thanh/deps_android/freeglut3-android-modules/install_in_ndk/sysroot/usr/lib/freeglut-gles.a)
@@ -60,8 +60,9 @@ lsd_slam_print_status("GLUT_INCLUDE_DIR:${GLUT_INCLUDE_DIR}")
 
 # GLEW
 set(GLEW_INCLUDE_DIR D:/deps_msvc_common/glew-1.10.0/include)
-set(GLEW_LIBRARY D:/deps_msvc_common/glew-1.10.0/lib/Release/Win32/glew32.lib)
-set(GLEW_BINARY_DIR D:/deps_msvc_common/glew-1.10.0/bin/Release/Win32)
+#set(GLEW_LIBRARY D:/deps_msvc_common/glew-1.10.0/lib/Release/Win32/glew32.lib)
+set(GLEW_BINARY_DIR ${GLEW_INCLUDE_DIR}/../bin/Release/Win32)
 lsd_slam_print_status("GLEW_INCLUDE_DIR:${GLEW_INCLUDE_DIR}")
+
 
 endif()
