@@ -78,6 +78,14 @@ else()
   lsd_slam_print_error("We don't support this platform!!!")
 endif(WIN32)
 
+if(ANDROID OR UNIX OR APPLE)
+  add_definitions(-std=c++11)
+endif()
+
+if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+  add_definitions(-stdlib=libstdc++)  # prevent default libc++ on new mac
+endif()
+
 set(CMAKE_CXX_FLAGS ${LsdSlam_CXX_FLAGS})
 lsd_slam_common_build_setting()
 
@@ -106,13 +114,17 @@ include_directories(${LSD_SLAM_DIR}/thirdparty/eigen-3.2.1)
 # Sophus
 include_directories(${LSD_SLAM_DIR}/thirdparty/Sophus)
 
-# FabMap
-include_directories(${LSD_SLAM_DIR}/thirdparty/openFabMap/include)
-add_definitions("-DHAVE_FABMAP")
-set(FABMAP_LIB openFABMAP )  # no need, only *.dll generated
+if(NOT ANDROID)  # no nonfree-feature2d in opencv android build yet!!!
+  # FabMap
+  include_directories(${LSD_SLAM_DIR}/thirdparty/openFabMap/include)
+  add_definitions("-DHAVE_FABMAP")
+  set(FABMAP_LIB openFABMAP )  # no need, only *.dll generated
+endif()
 
-# Direct API
-include_directories("${LSD_SLAM_DIR}/thirdparty/dirent-1.20.1/include")
+if(WIN32)
+  # Direct API
+  include_directories("${LSD_SLAM_DIR}/thirdparty/dirent-1.20.1/include")
+endif()
 
 set(LsdSlam_ALL_LIBRARIES ${FABMAP_LIB} ${LsdSlam_EXTERNAL_LIBS})
 lsd_slam_print_status("LsdSlam_ALL_LIBRARIES:${LsdSlam_ALL_LIBRARIES}")

@@ -3,10 +3,6 @@ lsd_slam_print_status("Setup required dependencies for LsdSlam tracking library"
 
 ##==============================================================================
 ## Boost
-if(WIN32)
-  set(Boost_USE_STATIC_LIBS  ON)
-endif(WIN32)
-
 find_package(Boost REQUIRED COMPONENTS system thread)
 
 if(Boost_FOUND)
