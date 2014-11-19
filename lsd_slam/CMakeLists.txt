@@ -1,6 +1,7 @@
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 2.8.9)
 project(lsd_slam)
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Sources & headers ============================================================
 set(modules depth_estimation global_mapping io_wrapper model tracking util)
@@ -22,5 +23,5 @@ set(lib_target lsd_slam)
 add_library(${lib_target} ${lsd_slam_srcs})
 set_property(TARGET ${lib_target} PROPERTY FOLDER "lsd_slam/libs")
 
-target_link_libraries(${lib_target} ${ALL_LIBRARIES})
-list(APPEND ALL_LIBRARIES ${lib_target})
+target_link_libraries(${lib_target} ${LsdSlam_ALL_LIBRARIES})
+list(APPEND LsdSlam_ALL_LIBRARIES ${lib_target})
