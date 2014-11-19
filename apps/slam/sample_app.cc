@@ -8,7 +8,7 @@
 #include "util/global_funcs.h"
 
 #include "util/Undistorter.h"
-#include "io_wrapper\OpenCVImageStreamThread.h"
+#include "io_wrapper/OpenCVImageStreamThread.h"
 #include "slam_system.h"
 #include "DebugOutput3DWrapper.h"
 
@@ -16,14 +16,13 @@ using namespace std;
 using namespace lsd_slam;
 char key;
 //PATH=C:\projects\uni\dissertation\Libraries\g2o\install\bin;C:\projects\uni\dissertation\Libraries\opencv\x86\vc12\bin;%PATH%
-int main()
-{
-	
+int main() {
 	cvNamedWindow("Camera_Output_Undist", 1); //Create window
-	
+
+  std::string calib_fn = std::string(LsdSlam_DIR) + "/data/out_camera_data.xml";
 	CvCapture* capture = cvCaptureFromCAM(CV_CAP_ANY); //Capture using any camera connected to your system
 	OpenCVImageStreamThread* inputStream = new OpenCVImageStreamThread();
-	inputStream->setCalibration("out_camera_data.xml");
+  inputStream->setCalibration(calib_fn);345 
 	inputStream->setCameraCapture(capture);
 	inputStream->run();
 
