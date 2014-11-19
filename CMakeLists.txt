@@ -49,8 +49,8 @@ elseif(CMAKE_BUILD_TYPE MATCHES MinSizeRel)
   set(EXE_POSTFIX ${CMAKE_MINSIZEREL_POSTFIX})
 endif(CMAKE_BUILD_TYPE MATCHES Release)
   
-set(LsdSlam_RUNTIME_OUTPUT_DIRECTORY ${LsdSlam_ROOT_DIR}/bin CACHE PATH "Target for the binaries")
-set(LsdSlam_LIBRARY_OUTPUT_DIRECTORY ${LsdSlam_ROOT_DIR}/lib CACHE PATH "Target for the libraries")
+set(LsdSlam_RUNTIME_OUTPUT_DIRECTORY ${LSD_SLAM_DIR}/bin CACHE PATH "Target for the binaries")
+set(LsdSlam_LIBRARY_OUTPUT_DIRECTORY ${LSD_SLAM_DIR}/lib CACHE PATH "Target for the libraries")
 link_directories(${LsdSlam_LIBRARY_OUTPUT_DIRECTORY})
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${LsdSlam_LIBRARY_OUTPUT_DIRECTORY})
@@ -109,7 +109,7 @@ include_directories(${LSD_SLAM_DIR}/thirdparty/Sophus)
 # FabMap
 include_directories(${LSD_SLAM_DIR}/thirdparty/openFabMap/include)
 add_definitions("-DHAVE_FABMAP")
-#set(FABMAP_LIB openFABMAP )  # no need, only *.dll generated
+set(FABMAP_LIB openFABMAP )  # no need, only *.dll generated
 
 # Direct API
 include_directories("${LSD_SLAM_DIR}/thirdparty/dirent-1.20.1/include")
@@ -129,6 +129,8 @@ add_subdirectory(thirdparty)
 # The Lsd Slam library =========================================================
 add_subdirectory(lsd_slam)
 
+list(APPEND LsdSlam_ALL_LIBRARIES lsd_slam)
+lsd_slam_print_status("LsdSlam_ALL_LIBRARIES After:${LsdSlam_ALL_LIBRARIES}")
 # Applications
 add_subdirectory(apps)
 

@@ -76,14 +76,14 @@ void Relocalizer::updateCurrentFrame(std::shared_ptr<Frame> currentFrame)
 	if(hasResult) return;
 
 	this->CurrentRelocFrame = currentFrame;
-//	int doneLast = KFForReloc.size() - (maxRelocIDX-nextRelocIDX);
+	int doneLast = KFForReloc.size() - (maxRelocIDX-nextRelocIDX);
 	maxRelocIDX = nextRelocIDX + KFForReloc.size();
 	newCurrentFrameSignal.notify_all();
 	lock.unlock();
 
-//	printf("tried last on %d. set new current frame %d. trying %d to %d!\n",
-//			doneLast,
-//			currentFrame->id(), nextRelocIDX, maxRelocIDX);
+	printf("tried last on %d. set new current frame %d. trying %d to %d!\n",
+			doneLast,
+			currentFrame->id(), nextRelocIDX, maxRelocIDX);
 
 	if (displayDepthMap)
 		Util::displayImage( "DebugWindow DEPTH", cv::Mat(currentFrame->height(), currentFrame->width(), CV_32F, currentFrame->image())*(1/255.0f), false );
@@ -94,6 +94,7 @@ void Relocalizer::updateCurrentFrame(std::shared_ptr<Frame> currentFrame)
 void Relocalizer::start(std::vector<Frame*> &allKeyframesList)
 {
 	// make KFForReloc List
+
 	KFForReloc.clear();
 	for(unsigned int k=0;k < allKeyframesList.size(); k++)
 	{

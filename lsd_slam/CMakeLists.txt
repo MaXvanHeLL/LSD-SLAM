@@ -25,3 +25,4 @@ set_property(TARGET ${lib_target} PROPERTY FOLDER "lsd_slam/libs")
 
 target_link_libraries(${lib_target} ${LsdSlam_ALL_LIBRARIES})
 list(APPEND LsdSlam_ALL_LIBRARIES ${lib_target})
+lsd_slam_print_status("LsdSlam_ALL_LIBRARIES slam:${LsdSlam_ALL_LIBRARIES}")

@@ -2,9 +2,9 @@
 
 @echo off
 
-set PATH=$PATH;@Boost_BINARY_DIR@;
-set PATH=$PATH;@OpenCV_BINARY_DIR@;
-set PATH=$PATH;@G2O_BINARY_DIR@;
+set PATH=%PATH%;@Boost_BINARY_DIR@;
+set PATH=%PATH%;@OpenCV_BINARY_DIR@;
+set PATH=%PATH%;@G2O_BINARY_DIR@;
 
 set PATH=%PATH%;@GLUT_INCLUDE_DIR@/../bin;
 set PATH=%PATH%;@GLEW_INCLUDE_DIR@/../bin/Release/Win32;

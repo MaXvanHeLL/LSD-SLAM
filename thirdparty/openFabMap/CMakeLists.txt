@@ -37,7 +37,7 @@ AUX_SOURCE_DIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/src OPENFABMAP_FILES)
 file(GLOB OPENFABMAP_INCS "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp")
 
 # tell cmake about the library
-add_library(openFABMAP SHARED ${OPENFABMAP_FILES} ${OPENFABMAP_INCS})
+add_library(openFABMAP STATIC ${OPENFABMAP_FILES} ${OPENFABMAP_INCS})
 set_property(TARGET openFABMAP PROPERTY FOLDER "lsd_slam/thirdparty")
 ############ end openFABMAP library ##################
 

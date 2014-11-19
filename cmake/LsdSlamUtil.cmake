@@ -117,7 +117,7 @@ macro(lsd_slam_common_build_setting)
     add_definitions(-DNOMINMAX)  # resolve conflicts of std::min()/std::max() on Windows MSVC
     add_definitions(-D_USE_MATH_DEFINES)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-    #add_definitions(-DEIGEN_DONT_ALIGN_STATICALLY)  # this is unusual
+    add_definitions(-DEIGEN_DONT_ALIGN_STATICALLY)  # this is unusual
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
     add_definitions(-DWIN32_LEAN_AND_MEAN) # speed up compiler by omitting some headers
     add_definitions(-DM_SQRT1_2=0.707106781186547524401) # missing in MSVC2013
@@ -125,11 +125,11 @@ macro(lsd_slam_common_build_setting)
     add_definitions("/MP") # multiple processes compilation
 
     # some magical optimized code flags
-    add_definitions("/GR-")  # disable runtime type info
+    #add_definitions("/GR-")  # disable runtime type info
     add_definitions("/fp:fast")  # fast floating point calc.
-    add_definitions("/GS-")  # disable security check
-    #add_definitions("/W0")  # disable all warnings
-    add_definitions("/GL")  # enable whole program optimization
+    #add_definitions("/GS-")  # disable security check
+    add_definitions("/W0")  # disable all warnings
+    #add_definitions("/GL")  # enable whole program optimization
 
     if(BUILD_SHARED_LIBS)
       # disable warning on missing DLL interfaces
