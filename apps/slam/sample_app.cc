@@ -22,7 +22,7 @@ int main() {
   std::string calib_fn = std::string(LsdSlam_DIR) + "/data/out_camera_data.xml";
 	CvCapture* capture = cvCaptureFromCAM(CV_CAP_ANY); //Capture using any camera connected to your system
 	OpenCVImageStreamThread* inputStream = new OpenCVImageStreamThread();
-  inputStream->setCalibration(calib_fn);345 
+  inputStream->setCalibration(calib_fn);
 	inputStream->setCameraCapture(capture);
 	inputStream->run();
 
