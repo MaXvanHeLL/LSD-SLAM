@@ -23,15 +23,11 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 
+namespace lsd_slam {
 
-namespace lsd_slam
-{
+namespace Util {
 
-namespace Util
-{
-
-	struct DisplayImageObject
-	{
+	struct DisplayImageObject {
 		cv::Mat img;
 		std::string name;
 		bool autoSize;
@@ -64,6 +60,6 @@ int waitKeyNoConsume(int milliseconds);
 
 void closeAllWindows();
 
-}
+}  // namespace Util
 
-}
+}  // namespace lsd_slam

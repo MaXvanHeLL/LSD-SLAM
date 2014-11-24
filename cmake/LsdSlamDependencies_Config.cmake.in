@@ -35,7 +35,7 @@ set(OpenCV_DIR D:/dev/gitlab_structural_modeling/precompiled/x86/vc12/prebuilts/
 lsd_slam_print_status("OpenCV_DIR:${OpenCV_DIR}")
 
 # G2O
-set(G2O_ROOT C:/Users/Thanh/deps_android/gcc4.8-armv7a-abi18-32bit/g2o)
+set(G2O_ROOT C:/Users/Thanh/deps_android/gcc4.8-arm-abiv7a-api18-32bit/g2o)
 if(ANDROID)
   set(G2O_INCLUDE_DIR ${G2O_ROOT}/include "${G2O_ROOT}/include/EXTERNAL/csparse")
   set(G2O_CORE_LIBRARY ${G2O_ROOT}/lib/libg2o_core.so)
@@ -45,7 +45,7 @@ if(ANDROID)
   set(G2O_SIMULATOR ${G2O_ROOT}/lib/libg2o_simulator.so)
 
   # csparse
-  set(G2O_SOLVER_CSPARSE ${G2O_ROOT}/lib/libg2o_csparse.so)
+  set(G2O_SOLVER_CSPARSE ${G2O_ROOT}/lib/libg2o_solver_csparse.so)
   set(G2O_SOLVER_CSPARSE_EXTENSION ${G2O_ROOT}/lib/libg2o_csparse_extension.so)
   set(G2O_EXT_CSPARSE ${G2O_ROOT}/lib/libg2o_ext_csparse.so)
 
