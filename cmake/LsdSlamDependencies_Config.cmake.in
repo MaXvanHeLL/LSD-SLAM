@@ -17,14 +17,17 @@ if(LsdSlam_USE_MANUAL_CONFIG_FILE)  # set to true here to manually configure
 ## Required dependencies =======================================================
 # Boost
 set(BOOST_ROOT C:/Users/Thanh/deps_android/boost_1_55_0)
+if(WIN32)
+  set(Boost_NAMESPACE libboost)  # windows build needs this ??
+endif()
 if(ANDROID)
   set(Boost_INCLUDE_DIR C:/Users/Thanh/deps_android/boost_1_55_0)
   set(Boost_LIBRARY_DIR ${BOOST_ROOT}/stage/lib)
   set(Boost_INCLUDE_DIRS ${Boost_INCLUDE_DIR})
+  set(Boost_ATOMIC_LIBRARY_RELEASE ${BOOST_LIBRARYDIR}/libboost_atomic-gcc-mt-s-1_55.a)
   set(Boost_THREAD_LIBRARY_RELEASE ${BOOST_LIBRARYDIR}/libboost_thread_pthread-gcc-mt-s-1_55.a)
   set(Boost_SYSTEM_LIBRARY_RELEASE ${BOOST_LIBRARYDIR}/libboost_system-gcc-mt-s-1_55.a)
-  set(Boost_LIBRARIES 
-    ${BOOST_LIBRARYDIR}/libboost_atomic-gcc-mt-s-1_55.a
+  set(Boost_LIBRARIES ${Boost_ATOMIC_LIBRARY_RELEASE}
     ${Boost_THREAD_LIBRARY_RELEASE} ${Boost_SYSTEM_LIBRARY_RELEASE})
 endif(ANDROID)
 lsd_slam_print_status("Boost_INCLUDE_DIR:${Boost_INCLUDE_DIR}")

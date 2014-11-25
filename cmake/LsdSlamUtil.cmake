@@ -102,12 +102,12 @@ macro(lsd_slam_common_build_setting)
   if(CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
     option(LsdSlam_ENABLE_NEON "Enable NEON" ON)
     if(LsdSlam_ENABLE_NEON)
-      add_definitions(-DLsdSlam_ENABLE_NEON)  # enable NEON code for ARM
+      add_definitions(-DENABLE_NEON)  # enable NEON code for ARM
     endif()
   else()
     option(LsdSlam_ENABLE_SSE "Enable SSE" ON)
     if(LsdSlam_ENABLE_SSE)
-      add_definitions(-DLsdSlam_ENABLE_SSE)   # SSE code
+      add_definitions(-DENABLE_SSE)   # SSE code
     endif()
     set(CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE} "${SSE_FLAGS}")
     set(CMAKE_CXX_FLAGS_RELWITHDEBINFO ${CMAKE_CXX_FLAGS_RELWITHDEBINFO} "${SSE_FLAGS}")

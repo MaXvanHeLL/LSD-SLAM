@@ -3,8 +3,11 @@ lsd_slam_print_status("Setup required dependencies for LsdSlam tracking library"
 
 ##==============================================================================
 ## Boost
-find_package(Boost REQUIRED COMPONENTS system thread)
-
+if(WIN32)
+  find_package(Boost REQUIRED COMPONENTS system thread)
+else()
+  find_package(Boost REQUIRED COMPONENTS system thread atomic)
+endif()
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
   cull_library_paths(Boost_LIBRARIES)
