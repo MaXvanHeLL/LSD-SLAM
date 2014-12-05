@@ -30,25 +30,29 @@ Build using CMake configuration.
 Using CMake-gui to configure.
 
 `Step 1`: Start configuration with pressing `Configure` in CMake-GUI.
+
 Note: you need to select "specify generator for this project" to Visual Studio 2013 and "Use default native compilers".
 Results looks like this:
-![Figure 1][doc/cmake-step1-configure.png]
+![Figure 1](doc/cmake-step1-configure.png)
 
 This will output build files in selected build folder (e.x.: ~/lsd-slam/build-x86-vc12).
 There are errors and warning, but don't worry; this will disappeared if you do the next steps correctly.
 
 `Step2`: Edit dependencies' paths in 'LsdSlamDependencies_Config.cmake' 
+
 For instance, it looks like this:
-![Figure 2][doc/cmake-step2-paths-edit.png]
+![Figure 2](doc/cmake-step2-paths-edit.png)
 
 `Step3`: Go back to CMake-GUI and press `Configure` again, and then press `Generate`
+
 The results would look like this:
-![Figure 3][doc/cmake-step3-reconfigure.png]
+![Figure 3](doc/cmake-step3-reconfigure.png)
 
 `Step4`: Open and build from Visual Studio 2013.
+
 Double click on "set_paths_and_run_vc.bat" file in the build folder (e.x.: ~/lsd-slam/build-x86-vc12/set_paths_and_run_vc.bat)
 
-![Figure 4][doc/cmake-step4-compile.png]
+![Figure 4](doc/cmake-step4-compile.png)
 
 
 There you go, you can build and run sample app now.
