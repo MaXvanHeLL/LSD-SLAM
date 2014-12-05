@@ -11,7 +11,7 @@ set(msg
 
 lsd_slam_print_status(${msg})
 
-option(LsdSlam_USE_MANUAL_CONFIG_FILE OFF)
+option(LsdSlam_USE_MANUAL_CONFIG_FILE ON)
 
 if(LsdSlam_USE_MANUAL_CONFIG_FILE)  # set to true here to manually configure
 ## Required dependencies =======================================================
