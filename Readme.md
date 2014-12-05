@@ -3,30 +3,30 @@ This lsd slam code is window port of original lsd slam code from [TUM LSD Slam r
 How to build on Windows with Visual Studio 2013
 =========
 
-# Requirement for building LSD Slam from source
+## Requirement for building LSD Slam from source
 
 [CMake 2.8+](www.cmake.org)
 
 [Visual Studio 2013](http://www.visualstudio.com)
 
-# Dependencies (Boost, OpenCV, G2O)
+## Dependencies (Boost, OpenCV, G2O)
 They can be built from source or download my prebuilt from [Shared folder](https://drive.google.com/folderview?id=0B1nK6wk4wuKqcjBIUXNuR0stakU&usp=drive_web)
 
-## For building dependencies from sources
-### Boost 1.5+
+### For building dependencies from sources
+#### Boost 1.5+
 Download prebuilt from [Boost.org](www.boost.org) is also fine.
 Make sure you get the prebuilts for Visual studio 2013 (VC12).
 
-## OpenCV 2.8+
+### OpenCV 2.8+
 NOTE: downloading prebuilt won't work. You need to built from source.
 Download source from [OpenCV.org](www.opencv.org).
 Build using CMake configuration.
 
-## G2O
+### G2O
 Download source from [https://github.com/williammc/g2o](https://github.com/williammc/g2o).
 Build using CMake configuration.
 
-# Now, build the LSD Slam source
+## Now, build the LSD Slam source
 Using CMake-gui to configure.
 
 `Step 1`: Start configuration with pressing `Configure` in CMake-GUI.
