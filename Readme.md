@@ -18,7 +18,7 @@ Download prebuilt from [Boost.org](www.boost.org) is also fine.
 Make sure you get the prebuilts for Visual studio 2013 (VC12).
 
 ### OpenCV 2.8+
-NOTE: downloading prebuilt won't work. You need to build from source.
+NOTE: downloading prebuilt from OpenCV.org won't work. You need to build from source.
 Download source from [OpenCV.org](www.opencv.org).
 Build using CMake configuration.
 
@@ -29,7 +29,7 @@ Build using CMake configuration.
 ## 3. Now, build the LSD Slam source
 Using CMake-gui to configure.
 
-`Step 1`: Start configuration with pressing `Configure` in CMake-GUI.
+### `Step 1`: Start configuration with pressing `Configure` in CMake-GUI.
 
 Note: you need to select "specify generator for this project" to Visual Studio 2013 and "Use default native compilers".
 Results looks like this:
@@ -39,20 +39,20 @@ Results looks like this:
 This will output build files in selected build folder (e.x.: ~/lsd-slam/build-x86-vc12).
 There are errors and warning, but don't worry; this will disappear if you do the next steps correctly.
 
-`Step2`: Edit dependencies' paths in 'LsdSlamDependencies_Config.cmake' 
+### `Step2`: Edit dependencies' paths in 'LsdSlamDependencies_Config.cmake' 
 
 The file locates in the build folder (e.x.: ~/lsd-slam/build-x86-vc12/LsdSlamDependencies_Config.cmake)
 For instance, it looks like this:
 
 ![Figure 2](doc/cmake-step2-paths-edit.png)
 
-`Step3`: Go back to CMake-GUI and press `Configure` again, and then press `Generate`
+### `Step3`: Go back to CMake-GUI and press `Configure` again, and then press `Generate`
 
 The results would look like this:
 
 ![Figure 3](doc/cmake-step3-reconfigure.png)
 
-`Step4`: Open and build from Visual Studio 2013.
+### `Step4`: Open and build from Visual Studio 2013.
 
 Double click on "set_paths_and_run_vc.bat" file in the build folder (e.x.: ~/lsd-slam/build-x86-vc12/set_paths_and_run_vc.bat)
 
