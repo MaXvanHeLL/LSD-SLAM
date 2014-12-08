@@ -1,4 +1,4 @@
-This lsd slam code is window port of original lsd slam code from [TUM LSD Slam repository](https://github.com/tum-vision/lsd_slam)
+This lsd slam code is Windows port of original lsd slam code from [TUM LSD Slam repository](https://github.com/tum-vision/lsd_slam)
 
 How to build on Windows with Visual Studio 2013
 =========
