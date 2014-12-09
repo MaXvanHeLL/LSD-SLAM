@@ -17,7 +17,7 @@ example-input datasets, and the generated output as rosbag or .ply point cloud.
 # How to build from source
 
 ## Windows
-For windows build, please follow instructions from [Windows build](WindowsBuildInstruction)
+For windows build, please follow instructions from [Windows build](WindowsBuildInstruction.md)
 
 ## Android 
 TBA
