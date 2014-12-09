@@ -30,4 +30,4 @@ TBA
 # License
 LSD-SLAM is licensed under the GNU General Public License Version 3 (GPLv3), see http://www.gnu.org/licenses/gpl.html.
 
-For commercial purposes, we also offer a professional version under different licencing terms.
+For commercial purposes, the original lsd slam authors also offer a professional version under different licencing terms.
