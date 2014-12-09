@@ -15,14 +15,16 @@ example-input datasets, and the generated output as rosbag or .ply point cloud.
 
 
 # How to build from source
+The lsd slam code requires c++11 features.
+Thus, it needs c++11 supported compiler to build the code from source.
 
-## Windows
+## Windows (requiring Visual Studio 2013)
 For windows build, please follow instructions from [Windows build](WindowsBuildInstruction.md)
 
-## Android 
+## Android (requiring gcc4.7+)
 TBA
 
-## Linux
+## Linux (requiring gcc4.7+)
 TBA
 
 # License
