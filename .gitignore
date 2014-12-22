@@ -31,3 +31,5 @@ cmake_install.cmake
 
 
 build-*/*
+lib/*
+bin/*
