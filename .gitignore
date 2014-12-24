@@ -33,3 +33,10 @@ cmake_install.cmake
 build-*/*
 lib/*
 bin/*
+thirdparty/dirent-1.20.1/vs2008/*
+thirdparty/dirent-1.20.1/tests/*
+thirdparty/dirent-1.20.1/examples/*
+data/plane_sequence/*
+lsd.sublime-workspace
+thirdparty/dirent-1.20.1.zip
+thirdparty/dirent-1.20.1/ChangeLog
