@@ -11,7 +11,7 @@ set(msg
 
 lsd_slam_print_status(${msg})
 
-option(LsdSlam_USE_MANUAL_CONFIG_FILE ON)
+option(LsdSlam_USE_MANUAL_CONFIG_FILE "To use manual config file (LsdSlamDependencies_Config.cmake)" ON)
 
 if(LsdSlam_USE_MANUAL_CONFIG_FILE)  # set to true here to manually configure
 ## Required dependencies =======================================================
