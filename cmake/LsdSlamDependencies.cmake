@@ -32,17 +32,13 @@ lsd_slam_print_status("OpenCV libs:${OpenCV_LIBRARIES}")
 # G2O
 find_package(G2O REQUIRED)
 set(G2O_BINARY_DIR ${G2O_ROOT}/bin)
-set(G2O_LIBRARIES ${G2O_CORE_LIBRARY} ${G2O_STUFF_LIBRARY}
-                  ${G2O_SOLVER_DENSE} ${G2O_TYPES_SLAM3D}
-                  ${G2O_SIMULATOR}
-                  )
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(G2O_LIBRARIES ${G2O_CORE_LIBRARY_DEBUG} ${G2O_STUFF_LIBRARY_DEBUG}
-                      ${G2O_SOLVER_DENSE_DEBUG} ${G2O_TYPES_SLAM3D_DEBUG}
-                      ${G2O_SIMULATOR_DEBUG}
-                      )
-endif()
+set(G2O_LIBRARIES optimized ${G2O_CORE_LIBRARY} debug ${G2O_CORE_LIBRARY_DEBUG} 
+                  optimized ${G2O_STUFF_LIBRARY} debug ${G2O_STUFF_LIBRARY_DEBUG}
+                  optimized ${G2O_SOLVER_DENSE} debug ${G2O_SOLVER_DENSE_DEBUG}
+                  optimized ${G2O_TYPES_SLAM3D} debug ${G2O_TYPES_SLAM3D_DEBUG}
+                  optimized ${G2O_SIMULATOR} debug ${G2O_SIMULATOR_DEBUG}
+                  )
 if(G2O_SOLVER_CSPARSE AND NOT APPLE)
   if(WIN32)
     list(APPEND G2O_INCLUDE_DIR "${G2O_ROOT}/include/EXTERNAL/csparse")

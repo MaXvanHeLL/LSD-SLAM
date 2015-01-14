@@ -21,6 +21,9 @@ int main() {
 
   std::string calib_fn = std::string(LsdSlam_DIR) + "/data/out_camera_data.xml";
 	CvCapture* capture = cvCaptureFromCAM(CV_CAP_ANY); //Capture using any camera connected to your system
+
+  cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH, 640);
+  cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT, 480);
 	OpenCVImageStreamThread* inputStream = new OpenCVImageStreamThread();
   inputStream->setCalibration(calib_fn);
 	inputStream->setCameraCapture(capture);
@@ -30,6 +33,7 @@ int main() {
 	LiveSLAMWrapper slamNode(inputStream, outputWrapper);
 	
 	IplImage* frame = cvQueryFrame(capture); //Create image frames from capture
+  printf("wh(%d, %d)\n", frame->width, frame->height);
 	cv::Mat mymat = cv::Mat(frame, true);
 	cv::Mat tracker_display = cv::Mat::ones(640, 480, CV_8UC3);
 	cv::circle(mymat, cv::Point(100, 100), 20, cv::Scalar(255, 1, 0),5);
