@@ -1,13 +1,13 @@
-# LSD-SLAM: Large-Scale Direct Monocular SLAM
+# Modified LSD-SLAM project for my Augmented Reality Oculus Rift integration 
 
-LSD-SLAM is a novel approach to real-time monocular SLAM. It is fully direct (i.e. does not use keypoints / features) and creates large-scale, 
-semi-dense maps in real-time on a laptop. For more information see
-[http://vision.in.tum.de/lsdslam](http://vision.in.tum.de/lsdslam)
-where you can also find the corresponding publications and Youtube videos, as well as some 
-example-input datasets, and the generated output as rosbag or .ply point cloud.
+I haved used the Windows port of LSD-SLAM from here: https://github.com/williammc/lsd_slam and modified it to integrate it into my AR stereo engine for the Rift [1]
+
+[1] https://github.com/MaXvanHeLL/ARift
 
 
 ### Related Papers
+
+* **Augmented Reality Oculus Rift**, *M. Höll, N. Heran, V. Lepetit*, '16
 
 * **LSD-SLAM: Large-Scale Direct Monocular SLAM**, *J. Engel, T. Schöps, D. Cremers*, ECCV '14
 
@@ -20,12 +20,6 @@ Thus, it needs c++11 supported compiler to build the code from source.
 
 ## Windows (requiring Visual Studio 2013)
 For windows build, please follow instructions from [Windows build](WindowsBuildInstruction.md)
-
-## Android (requiring gcc4.7+)
-TBA
-
-## Linux (requiring gcc4.7+)
-TBA
 
 # License
 LSD-SLAM is licensed under the GNU General Public License Version 3 (GPLv3), see http://www.gnu.org/licenses/gpl.html.
